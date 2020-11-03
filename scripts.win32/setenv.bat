@@ -1,4 +1,4 @@
-set PROJECT=mini
+set PROJECT=addPIN
 
 set DIR=..
 set OUT=%DIR%\out

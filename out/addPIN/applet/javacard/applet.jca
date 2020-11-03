@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Mon Nov 20 13:38:36 CET 2017
+// on Tue Nov 03 16:45:08 CET 2020
 
 .package applet {
 	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x6;
@@ -15,33 +15,57 @@
 
 	.constantPool {
 		// 0
-		staticMethodRef 0.3.0()V;		// javacard/framework/Applet.<init>()V
+		instanceFieldRef 0.9 TheApplet/pin;
 		// 1
-		virtualMethodRef 0.3.1()V;		// javacard/framework/Applet.register()V
+		classRef 0.9;		// javacard/framework/OwnerPIN
 		// 2
-		classRef TheApplet;
+		staticMethodRef 0.9.0(BB)V;		// javacard/framework/OwnerPIN.<init>(BB)V
 		// 3
-		staticMethodRef TheApplet/<init>()V;
+		staticMethodRef 0.3.0()V;		// javacard/framework/Applet.<init>()V
 		// 4
-		virtualMethodRef 0.10.1()[B;		// javacard/framework/APDU.getBuffer()[B
+		virtualMethodRef 0.9.8([BSB)V;		// javacard/framework/OwnerPIN.update([BSB)V
 		// 5
-		staticFieldRef byte[] TheApplet/NVR;
+		virtualMethodRef 0.3.1()V;		// javacard/framework/Applet.register()V
 		// 6
-		staticMethodRef 0.16.1([BS[BSS)S;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+		classRef TheApplet;
 		// 7
-		virtualMethodRef 0.10.8(SS)V;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+		staticMethodRef TheApplet/<init>()V;
 		// 8
-		virtualMethodRef 0.10.6()S;		// javacard/framework/APDU.setIncomingAndReceive()S
+		virtualMethodRef 0.9.2()B;		// javacard/framework/OwnerPIN.getTriesRemaining()B
 		// 9
+		virtualMethodRef 0.9.5()V;		// javacard/framework/OwnerPIN.reset()V
+		// 10
+		virtualMethodRef 0.10.6()S;		// javacard/framework/APDU.setIncomingAndReceive()S
+		// 11
+		virtualMethodRef 0.10.1()[B;		// javacard/framework/APDU.getBuffer()[B
+		// 12
+		virtualMethodRef 0.9.1([BSB)Z;		// javacard/framework/OwnerPIN.check([BSB)Z
+		// 13
 		staticMethodRef 0.7.1(S)V;		// javacard/framework/ISOException.throwIt(S)V
+		// 14
+		virtualMethodRef 0.9.4()Z;		// javacard/framework/OwnerPIN.isValidated()Z
+		// 15
+		staticFieldRef byte[] TheApplet/NVR;
+		// 16
+		staticMethodRef 0.16.1([BS[BSS)S;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+		// 17
+		virtualMethodRef 0.10.8(SS)V;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+		// 18
+		virtualMethodRef TheApplet/verify(Ljavacard/framework/APDU;)V;
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
 	}
 
 	.class public TheApplet 0 extends 0.3 {		// extends javacard/framework/Applet
 
 		.fields {
+			 0.9 pin 0;		// Ljavacard/framework/OwnerPIN;
 			static final byte BINARY_WRITE = -48;		// B
 			static final byte BINARY_READ = -80;		// B
 			static final byte SELECT = -92;		// B
+			static final byte PIN_VERIFY = 32;		// B
+			static final short SW_PIN_VERIFICATION_REQUIRED = 25345;		// S
+			static final short SW_VERIFICATION_FAILED = 25344;		// S
 			static final short NVRSIZE = 1024;		// S
 			static byte[] NVR = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};		// [B
 		}
@@ -58,16 +82,48 @@
 		}
 
 		.packageMethodTable 0 {
+			verify(Ljavacard/framework/APDU;)V;
 		}
 
 		.method protected <init>()V 0 {
-			.stack 1;
-			.locals 0;
+			.stack 5;
+			.locals 1;
 
 				L0:	aload_0;
-					invokespecial 0;		// javacard/framework/Applet.<init>()V
+					invokespecial 3;		// javacard/framework/Applet.<init>()V
+					sconst_4;
+					newarray 11;
+					dup;
+					sconst_0;
+					bspush 48;
+					bastore;
+					dup;
+					sconst_1;
+					bspush 48;
+					bastore;
+					dup;
+					sconst_2;
+					bspush 48;
+					bastore;
+					dup;
+					sconst_3;
+					bspush 48;
+					bastore;
+					astore_1;
 					aload_0;
-					invokevirtual 1;		// javacard/framework/Applet.register()V
+					new 1;		// javacard/framework/OwnerPIN
+					dup;
+					sconst_3;
+					bspush 8;
+					invokespecial 2;		// javacard/framework/OwnerPIN.<init>(BB)V
+					putfield_a 0;		// reference applet/TheApplet.pin
+					getfield_a_this 0;		// reference applet/TheApplet.pin
+					aload_1;
+					sconst_0;
+					sconst_4;
+					invokevirtual 4;		// javacard/framework/OwnerPIN.update([BSB)V
+					aload_0;
+					invokevirtual 5;		// javacard/framework/Applet.register()V
 					return;
 		}
 
@@ -75,9 +131,9 @@
 			.stack 2;
 			.locals 0;
 
-				L0:	new 2;		// applet/TheApplet
+				L0:	new 6;		// applet/TheApplet
 					dup;
-					invokespecial 3;		// applet/TheApplet.<init>()V
+					invokespecial 7;		// applet/TheApplet.<init>()V
 					pop;
 					return;
 		}
@@ -86,15 +142,47 @@
 			.stack 1;
 			.locals 0;
 
-				L0:	sconst_1;
+				L0:	getfield_a_this 0;		// reference applet/TheApplet.pin
+					invokevirtual 8;		// javacard/framework/OwnerPIN.getTriesRemaining()B
+					ifne L2;
+				L1:	sconst_0;
+					sreturn;
+				L2:	sconst_1;
 					sreturn;
 		}
 
 		.method public deselect()V 4 {
-			.stack 0;
+			.stack 1;
 			.locals 0;
 
-				L0:	return;
+				L0:	getfield_a_this 0;		// reference applet/TheApplet.pin
+					invokevirtual 9;		// javacard/framework/OwnerPIN.reset()V
+					return;
+		}
+
+		.method  verify(Ljavacard/framework/APDU;)V 128 {
+			.stack 5;
+			.locals 1;
+
+			.descriptor	Ljavacard/framework/APDU;	0.10;
+
+				L0:	aload_1;
+					invokevirtual 10;		// javacard/framework/APDU.setIncomingAndReceive()S
+					pop;
+					aload_1;
+					invokevirtual 11;		// javacard/framework/APDU.getBuffer()[B
+					astore_2;
+					getfield_a_this 0;		// reference applet/TheApplet.pin
+					aload_2;
+					sconst_5;
+					aload_2;
+					sconst_4;
+					baload;
+					invokevirtual 12;		// javacard/framework/OwnerPIN.check([BSB)Z
+					ifne L2;
+				L1:	sspush 25344;
+					invokestatic 13;		// javacard/framework/ISOException.throwIt(S)V
+				L2:	return;
 		}
 
 		.method public process(Ljavacard/framework/APDU;)V 7 {
@@ -104,45 +192,59 @@
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
 				L0:	aload_1;
-					invokevirtual 4;		// javacard/framework/APDU.getBuffer()[B
+					invokevirtual 11;		// javacard/framework/APDU.getBuffer()[B
 					astore_2;
 					aload_2;
 					sconst_1;
 					baload;
-					slookupswitch L4 3 -92 L1 -80 L2 -48 L3;
+					slookupswitch L9 4 -92 L1 -80 L2 -48 L5 32 L8;
 				L1:	return;
-				L2:	getstatic_a 5;		// reference applet/TheApplet.NVR
+				L2:	getfield_a_this 0;		// reference applet/TheApplet.pin
+					invokevirtual 14;		// javacard/framework/OwnerPIN.isValidated()Z
+					ifne L4;
+				L3:	sspush 25345;
+					invokestatic 13;		// javacard/framework/ISOException.throwIt(S)V
+				L4:	getstatic_a 15;		// reference applet/TheApplet.NVR
 					sconst_0;
 					aload_2;
 					sconst_0;
 					aload_2;
 					sconst_4;
 					baload;
-					invokestatic 6;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					invokestatic 16;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
 					aload_1;
 					sconst_0;
 					aload_2;
 					sconst_4;
 					baload;
-					invokevirtual 7;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
-					goto L5;
-				L3:	aload_1;
-					invokevirtual 8;		// javacard/framework/APDU.setIncomingAndReceive()S
+					invokevirtual 17;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+					goto L10;
+				L5:	getfield_a_this 0;		// reference applet/TheApplet.pin
+					invokevirtual 14;		// javacard/framework/OwnerPIN.isValidated()Z
+					ifne L7;
+				L6:	sspush 25345;
+					invokestatic 13;		// javacard/framework/ISOException.throwIt(S)V
+				L7:	aload_1;
+					invokevirtual 10;		// javacard/framework/APDU.setIncomingAndReceive()S
 					pop;
 					aload_2;
 					sconst_5;
-					getstatic_a 5;		// reference applet/TheApplet.NVR
+					getstatic_a 15;		// reference applet/TheApplet.NVR
 					sconst_0;
 					aload_2;
 					sconst_4;
 					baload;
-					invokestatic 6;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					invokestatic 16;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
-					goto L5;
-				L4:	sspush 27904;
-					invokestatic 9;		// javacard/framework/ISOException.throwIt(S)V
-				L5:	return;
+					goto L10;
+				L8:	aload_0;
+					aload_1;
+					invokevirtual 18;		// applet/TheApplet.verify(Ljavacard/framework/APDU;)V
+					goto L10;
+				L9:	sspush 27904;
+					invokestatic 13;		// javacard/framework/ISOException.throwIt(S)V
+				L10:	return;
 		}
 
 	}

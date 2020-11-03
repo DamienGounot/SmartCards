@@ -149,7 +149,7 @@ public class TheClient {
             cmd = new CommandAPDU( cmd_1 );
             resp = this.sendAPDU( cmd, DISPLAY );
 
-	    /*
+	    //
 	    byte[] cmd_2= { (byte)0xBC, (byte)0x20, (byte)0x00, (byte)0x00, (byte)0x04, (byte)0x31, (byte)0x30, (byte)0x30, (byte)0x30};
 	    System.out.println(" // Verify pin=1000 // 63 00 Error");
             cmd = new CommandAPDU( cmd_2 );
@@ -164,7 +164,7 @@ public class TheClient {
 	    System.out.println(" // Write 4 bytes into the card after pin verification // 90 00 = SW_NO_ERROR ");
             cmd = new CommandAPDU( cmd_4 );
             resp = this.sendAPDU( cmd, DISPLAY );
-	    */
+	    //
 
 	    byte[] cmd_5= { (byte)0xBC, (byte)0xB0, (byte)0x00, (byte)0x00, (byte)0x04};
 	    System.out.println(" // Read 4 bytes from the card // 12 34 56 78 90 00");
