@@ -204,10 +204,50 @@ public class TheClient {
 
 
 	void readNameFromCard() {
+
+		byte[] header = {CLA,READNAMEFROMCARD, P1,P2};
+		byte[] command = new byte[(byte)((byte)header.length +(byte)1)];
+		command[4] = 0; // Le = 0 car attente de data de taille inconnue
+		System.arraycopy(header, (byte)0, command, (byte)0, (byte)header.length);
+
+
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
+
+		byte[] bytes = resp.getBytes();
+		
+
+	    String msg = "";
+	    for(int i=0; i<bytes.length-2;i++)
+		    msg += new StringBuffer("").append((char)bytes[i]);
+	    System.out.println(msg);
 	}
 
 
 	void writeNameToCard() {
+		System.out.println("Saisissez le nom a inscrire sur la carte:");
+		String name = readKeyboard();
+		byte[] data = name.getBytes();
+
+		byte[] header = {CLA,WRITENAMETOCARD, P1,P2};
+
+		byte[] optional = new byte[(byte)1 + (byte)data.length]; // un byte pour Lc et data.lenght bytes
+		optional[0] = (byte)data.length; // Lc = nb bytes de data
+
+		System.arraycopy(data, (byte)0, optional, (byte)1, optional[0]);
+		// copie de data vers "Optionnal part" (offset 1 car indice 0 = Lc), de taille Lc
+
+		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		// commande de taille Header + Optionnal part
+
+		// copy de header vers command, de taille header
+		System.arraycopy(header, (byte)0, command, (byte)0, (byte)header.length);
+		//copy de optionalPart vers header (offset taille de header), de taille optional part
+		System.arraycopy(optional, (byte)0, command,(byte)header.length, (byte)optional.length);
+		
+
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
 	}
 
 
