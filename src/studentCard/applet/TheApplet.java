@@ -24,6 +24,8 @@ public class TheApplet extends Applet {
 	static final byte READNAMEFROMCARD			= (byte)0x02;
 	static final byte WRITENAMETOCARD			= (byte)0x01;
 
+	static byte[] studentName = new byte[64];
+
 
 	protected TheApplet() {
 		this.register();
@@ -119,10 +121,21 @@ public class TheApplet extends Applet {
 
 
 	void readNameFromCard( APDU apdu ) {
+
+		byte[] buffer = apdu.getBuffer();
+		Util.arrayCopy(studentName, (byte)1, buffer, (byte)0, studentName[0]);
+		// copy de studentname (avec offset 1 pour skip Lc) de taille Lc
+		apdu.setOutgoingAndSend((short)0, studentName[0]);
 	}
 
 
 	void writeNameToCard( APDU apdu ) {
+		byte[] buffer = apdu.getBuffer();  
+
+		apdu.setIncomingAndReceive();
+		Util.arrayCopy(buffer, (byte)4, studentName, (byte)0, (byte)(buffer[4]+(byte)1));
+		// buffer = requeteClient , offset 4 = Lc
+		// NB: on ecrit dans studentname: Lc + data (taille Lc+1, pour pouvoir contenir Lc et la taille de data)
 	}
 
 
