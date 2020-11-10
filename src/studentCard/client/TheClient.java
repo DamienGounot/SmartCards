@@ -200,6 +200,14 @@ public class TheClient {
 
 
 	void enterWritePIN() {
+		System.out.println("Saisissez le pin d'acces en ecriture:");
+		String name = readKeyboard();
+		byte[] data = name.getBytes();
+
+		byte[] header = {CLA,WRITENAMETOCARD, P1,P2};
+
+		byte[] optional = new byte[(byte)1 + (byte)data.length]; // un byte pour Lc et data.lenght bytes
+		optional[0] = (byte)data.length; // Lc = nb bytes de data
 	}
 
 
