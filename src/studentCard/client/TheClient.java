@@ -196,18 +196,44 @@ public class TheClient {
 
 
 	void enterReadPIN() {
+		System.out.println("Saisissez le pin d'acces en lecture:");
+		String pin = readKeyboard();
+		byte[] data = pin.getBytes();
+
+		byte[] header = {CLA,ENTERREADPIN, P1,P2};
+		byte[] optional = new byte[(byte)1 + (byte)data.length]; // un byte pour Lc et data.lenght bytes
+
+
+		optional[0] = (byte)data.length; // Lc = nb bytes de data
+		System.arraycopy(data, (byte)0, optional, (byte)1, optional[0]);
+		// copie du code pin vers le champ data (pas de Le)
+
+		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
+		System.arraycopy(optional,(byte)0,command,(byte)header.length,(byte)optional.length);
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
 	}
 
 
 	void enterWritePIN() {
 		System.out.println("Saisissez le pin d'acces en ecriture:");
-		String name = readKeyboard();
-		byte[] data = name.getBytes();
+		String pin = readKeyboard();
+		byte[] data = pin.getBytes();
 
-		byte[] header = {CLA,WRITENAMETOCARD, P1,P2};
-
+		byte[] header = {CLA,ENTERWRITEPIN, P1,P2};
 		byte[] optional = new byte[(byte)1 + (byte)data.length]; // un byte pour Lc et data.lenght bytes
+
+
 		optional[0] = (byte)data.length; // Lc = nb bytes de data
+		System.arraycopy(data, (byte)0, optional, (byte)1, optional[0]);
+		// copie du code pin vers le champ data (pas de Le)
+
+		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
+		System.arraycopy(optional,(byte)0,command,(byte)header.length,(byte)optional.length);
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
 	}
 
 
