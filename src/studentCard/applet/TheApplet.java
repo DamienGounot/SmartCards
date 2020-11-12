@@ -26,8 +26,28 @@ public class TheApplet extends Applet {
 
 	static byte[] studentName = new byte[64];
 
+	OwnerPIN pinRead;
+	OwnerPIN pinWrite;
+
+	final static byte  BINARY_WRITE = (byte) 0xD0;
+	final static byte  BINARY_READ  = (byte) 0xB0;
+	final static byte  SELECT       = (byte) 0xA4;
+	final static byte  PIN_VERIFY   = (byte) 0x20;
+	final static short SW_PIN_VERIFICATION_REQUIRED = (short) 0x6301;
+	final static short SW_VERIFICATION_FAILED = (short)0x6300;
+	final static short NVRSIZE      = (short)1024;
+	static byte[] NVR               = new byte[NVRSIZE];
+
 
 	protected TheApplet() {
+
+		byte[] _pinRead_ = {(byte)0x30,(byte)0x30,(byte)0x30,(byte)0x30}; // PIN code "0000"
+		byte[] _pinWrite_ = {(byte)0x31,(byte)0x31,(byte)0x31,(byte)0x31}; // PIN code "1111"
+
+		pinRead = new OwnerPIN((byte)3,(byte)8);  				// 3 tries 8=Max Size
+		pinRead.update(_pinRead_,(short)0,(byte)4); 				// from pincode, offset 0, length 4
+		pinWrite = new OwnerPIN((byte)3,(byte)8);  				// 3 tries 8=Max Size
+		pinWrite.update(_pinWrite_,(short)0,(byte)4); 				// from pincode, offset 0, length 4
 		this.register();
 	}
 
@@ -38,13 +58,16 @@ public class TheApplet extends Applet {
 
 
 	public boolean select() {
+		if ( pinRead.getTriesRemaining() == 0 || pinWrite.getTriesRemaining() == 0) // si 3 essais erronés successifs en lecture ou écriture, la carte est down
+		return false;
 		return true;
 	} 
 
 
 	public void deselect() {
+		pinRead.reset();
+		pinWrite.reset();
 	}
-
 
 	public void process(APDU apdu) throws ISOException {
 		if( selectingApplet() == true )
@@ -65,8 +88,14 @@ public class TheApplet extends Applet {
 			case DESACTIVATEACTIVATEPINSECURITY: desactivateActivatePINSecurity( apdu ); break;
 			case ENTERREADPIN: enterReadPIN( apdu ); break;
 			case ENTERWRITEPIN: enterWritePIN( apdu ); break;
-			case READNAMEFROMCARD: readNameFromCard( apdu ); break;
-			case WRITENAMETOCARD: writeNameToCard( apdu ); break;
+			case READNAMEFROMCARD:
+				if ( ! pinRead.isValidated() )
+					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
+				readNameFromCard( apdu ); break;
+			case WRITENAMETOCARD: 
+				if ( ! pinWrite.isValidated() )
+					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
+				writeNameToCard( apdu ); break;
 			default: ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
 		}
 	}
@@ -113,10 +142,18 @@ public class TheApplet extends Applet {
 
 
 	void enterReadPIN( APDU apdu ) {
+		apdu.setIncomingAndReceive();
+		byte[] buffer = apdu.getBuffer();
+		if( !pinRead.check( buffer, (byte)5, buffer[4] ) ) 
+			ISOException.throwIt( SW_VERIFICATION_FAILED );
 	}
 
 
 	void enterWritePIN( APDU apdu ) {
+		byte[] buffer = apdu.getBuffer();  
+		apdu.setIncomingAndReceive();
+		if( !pinWrite.check( buffer, (byte)5, buffer[4] ) ) 
+			ISOException.throwIt( SW_VERIFICATION_FAILED );
 	}
 
 
@@ -131,7 +168,6 @@ public class TheApplet extends Applet {
 
 	void writeNameToCard( APDU apdu ) {
 		byte[] buffer = apdu.getBuffer();  
-
 		apdu.setIncomingAndReceive();
 		Util.arrayCopy(buffer, (byte)4, studentName, (byte)0, (byte)(buffer[4]+(byte)1));
 		// buffer = requeteClient , offset 4 = Lc
