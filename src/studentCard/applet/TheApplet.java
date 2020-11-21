@@ -40,12 +40,10 @@ public class TheApplet extends Applet {
 
 	boolean PINsecurity;
 
-
 	protected TheApplet() {
 
 		byte[] _pinRead_ = {(byte)0x30,(byte)0x30,(byte)0x30,(byte)0x30}; // PIN code "0000"
 		byte[] _pinWrite_ = {(byte)0x31,(byte)0x31,(byte)0x31,(byte)0x31}; // PIN code "1111"
-
 		pinRead = new OwnerPIN((byte)3,(byte)8);  				// 3 tries 8=Max Size
 		pinRead.update(_pinRead_,(short)0,(byte)4); 				// from pincode, offset 0, length 4
 		pinWrite = new OwnerPIN((byte)3,(byte)8);  				// 3 tries 8=Max Size
@@ -153,6 +151,19 @@ public class TheApplet extends Applet {
 
 
 	void displayPINSecurity( APDU apdu ) {
+
+		byte[] buffer = apdu.getBuffer();
+
+		if(PINsecurity)
+		{
+		buffer[0] = (byte)0x31;
+		}
+		else
+		{
+		buffer[0] = (byte)0x30;
+		}
+		
+		apdu.setOutgoingAndSend((short)0, (byte)1);
 	}
 
 

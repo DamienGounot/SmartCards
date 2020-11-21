@@ -188,6 +188,21 @@ public class TheClient {
 
 
 	void displayPINSecurity() {
+		byte[] header = {CLA,DISPLAYPINSECURITY, P1,P2};
+		byte[] command = new byte[(byte)((byte)header.length +(byte)1)];
+		System.arraycopy(header, (byte)0, command, (byte)0, (byte)header.length);
+		command[4] = 1; // Le = 1 car attente de 1 byte
+
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
+
+		byte[] bytes = resp.getBytes();
+		
+
+	    String msg = "PIN security status: ";
+	    for(int i=0; i<bytes.length-2;i++)
+		    msg += new StringBuffer("").append((char)bytes[i]);
+	    System.out.println(msg);
 	}
 
 
