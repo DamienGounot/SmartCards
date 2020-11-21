@@ -94,26 +94,27 @@ public class TheApplet extends Applet {
 			case READNAMEFROMCARD:
 				if(!PINsecurity)
 				{
-					readNameFromCard( apdu ); break;
+					readNameFromCard( apdu );
 				}
 				else
 				{
 					if ( ! pinRead.isValidated() )
 					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
-					readNameFromCard( apdu ); break;
+					readNameFromCard( apdu );
 				}
-
+			break;
 			case WRITENAMETOCARD: 
 				if(!PINsecurity)
 				{
-					writeNameToCard( apdu ); break;
+					writeNameToCard( apdu );
 				}
 				else
 				{
 					if ( ! pinWrite.isValidated() )
 					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
-					writeNameToCard( apdu ); break;
+					writeNameToCard( apdu );
 				}
+			break;
 			default: ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
 		}
 	}
@@ -156,6 +157,14 @@ public class TheApplet extends Applet {
 
 
 	void desactivateActivatePINSecurity( APDU apdu ) {
+		if(PINsecurity) 
+		{
+			PINsecurity = false;
+		}
+		else
+		{
+			PINsecurity = true;
+		}
 	}
 
 

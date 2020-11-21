@@ -192,6 +192,11 @@ public class TheClient {
 
 
 	void desactivateActivatePINSecurity() {
+		byte[] header = {CLA,DESACTIVATEACTIVATEPINSECURITY, P1,P2};
+		byte[] command = new byte[(byte)header.length];
+		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
 	}
 
 
