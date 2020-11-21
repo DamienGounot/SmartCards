@@ -180,10 +180,46 @@ public class TheClient {
 
 
 	void updateWritePIN() {
+		
+		System.out.println("Saisissez le NOUVEAU pin d'acces en ecriture:");
+		String pin = readKeyboard();
+		byte[] data = pin.getBytes();
+
+		byte[] header = {CLA,UPDATEWRITEPIN, P1,P2};
+		byte[] optional = new byte[(byte)1 + (byte)data.length]; // un byte pour Lc et data.lenght bytes
+
+
+		optional[0] = (byte)data.length; // Lc = nb bytes de data
+		System.arraycopy(data, (byte)0, optional, (byte)1, optional[0]);
+		// copie du code pin vers le champ data (pas de Le)
+
+		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
+		System.arraycopy(optional,(byte)0,command,(byte)header.length,(byte)optional.length);
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
 	}
 
 
 	void updateReadPIN() {
+
+		System.out.println("Saisissez le NOUVEAU pin d'acces en lecture:");
+		String pin = readKeyboard();
+		byte[] data = pin.getBytes();
+
+		byte[] header = {CLA,UPDATEREADPIN, P1,P2};
+		byte[] optional = new byte[(byte)1 + (byte)data.length]; // un byte pour Lc et data.lenght bytes
+
+
+		optional[0] = (byte)data.length; // Lc = nb bytes de data
+		System.arraycopy(data, (byte)0, optional, (byte)1, optional[0]);
+		// copie du code pin vers le champ data (pas de Le)
+
+		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
+		System.arraycopy(optional,(byte)0,command,(byte)header.length,(byte)optional.length);
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
 	}
 
 
