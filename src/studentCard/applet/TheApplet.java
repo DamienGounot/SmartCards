@@ -38,6 +38,8 @@ public class TheApplet extends Applet {
 	final static short NVRSIZE      = (short)1024;
 	static byte[] NVR               = new byte[NVRSIZE];
 
+	boolean PINsecurity;
+
 
 	protected TheApplet() {
 
@@ -48,6 +50,7 @@ public class TheApplet extends Applet {
 		pinRead.update(_pinRead_,(short)0,(byte)4); 				// from pincode, offset 0, length 4
 		pinWrite = new OwnerPIN((byte)3,(byte)8);  				// 3 tries 8=Max Size
 		pinWrite.update(_pinWrite_,(short)0,(byte)4); 				// from pincode, offset 0, length 4
+		PINsecurity = true;	// init PINsecurity to true
 		this.register();
 	}
 
@@ -89,13 +92,28 @@ public class TheApplet extends Applet {
 			case ENTERREADPIN: enterReadPIN( apdu ); break;
 			case ENTERWRITEPIN: enterWritePIN( apdu ); break;
 			case READNAMEFROMCARD:
-				if ( ! pinRead.isValidated() )
+				if(!PINsecurity)
+				{
+					readNameFromCard( apdu ); break;
+				}
+				else
+				{
+					if ( ! pinRead.isValidated() )
 					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
-				readNameFromCard( apdu ); break;
+					readNameFromCard( apdu ); break;
+				}
+
 			case WRITENAMETOCARD: 
-				if ( ! pinWrite.isValidated() )
+				if(!PINsecurity)
+				{
+					writeNameToCard( apdu ); break;
+				}
+				else
+				{
+					if ( ! pinWrite.isValidated() )
 					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
-				writeNameToCard( apdu ); break;
+					writeNameToCard( apdu ); break;
+				}
 			default: ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
 		}
 	}
