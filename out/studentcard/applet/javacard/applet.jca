@@ -1,9 +1,5 @@
 // converted by version 1.3
-<<<<<<< HEAD
-// on Sat Nov 21 16:31:08 CET 2020
-=======
-// on Sat Nov 21 16:48:10 CET 2020
->>>>>>> main
+// on Sat Nov 21 17:45:03 CET 2020
 
 .package applet {
 	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x6;
@@ -75,47 +71,47 @@
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
 		// 21
+		virtualMethodRef 0.9.4()Z;		// javacard/framework/OwnerPIN.isValidated()Z
+		// 22
+		staticMethodRef 0.7.1(S)V;		// javacard/framework/ISOException.throwIt(S)V
+		// 23
 		virtualMethodRef TheApplet/updateReadPIN(Ljavacard/framework/APDU;)V;
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
-		// 22
+		// 24
 		virtualMethodRef TheApplet/displayPINSecurity(Ljavacard/framework/APDU;)V;
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
-		// 23
+		// 25
 		virtualMethodRef TheApplet/desactivateActivatePINSecurity(Ljavacard/framework/APDU;)V;
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
-		// 24
+		// 26
 		virtualMethodRef TheApplet/enterReadPIN(Ljavacard/framework/APDU;)V;
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
-		// 25
+		// 27
 		virtualMethodRef TheApplet/enterWritePIN(Ljavacard/framework/APDU;)V;
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
-		// 26
+		// 28
 		virtualMethodRef TheApplet/readNameFromCard(Ljavacard/framework/APDU;)V;
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
-		// 27
-		virtualMethodRef 0.9.4()Z;		// javacard/framework/OwnerPIN.isValidated()Z
-		// 28
-		staticMethodRef 0.7.1(S)V;		// javacard/framework/ISOException.throwIt(S)V
 		// 29
 		virtualMethodRef TheApplet/writeNameToCard(Ljavacard/framework/APDU;)V;
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
 		// 30
-		virtualMethodRef 0.10.8(SS)V;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
-		// 31
 		virtualMethodRef 0.10.6()S;		// javacard/framework/APDU.setIncomingAndReceive()S
-		// 32
-		virtualMethodRef 0.9.1([BSB)Z;		// javacard/framework/OwnerPIN.check([BSB)Z
-		// 33
-		staticFieldRef byte[] TheApplet/studentName;
-		// 34
+		// 31
 		staticMethodRef 0.16.1([BS[BSS)S;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+		// 32
+		virtualMethodRef 0.10.8(SS)V;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+		// 33
+		virtualMethodRef 0.9.1([BSB)Z;		// javacard/framework/OwnerPIN.check([BSB)Z
+		// 34
+		staticFieldRef byte[] TheApplet/studentName;
 	}
 
 	.class public TheApplet 0 extends 0.3 {		// extends javacard/framework/Applet
@@ -308,88 +304,110 @@
 					aload_2;
 					sconst_1;
 					baload;
-					stableswitch L25 1 20 L20 L15 L14 L13 L12 L11 L10 L9 L8 L25 L25 L25 L25 L25 L25 L7 L6 L5 L4 L3;
+					stableswitch L33 1 20 L28 L23 L22 L21 L20 L19 L14 L9 L8 L33 L33 L33 L33 L33 L33 L7 L6 L5 L4 L3;
 				L3:	aload_0;
 					aload_1;
 					invokevirtual 14;		// applet/TheApplet.updateCardKey(Ljavacard/framework/APDU;)V
-					goto_w L26;
+					goto_w L34;
 				L4:	aload_0;
 					aload_1;
 					invokevirtual 15;		// applet/TheApplet.uncipherFileByCard(Ljavacard/framework/APDU;)V
-					goto_w L26;
+					goto_w L34;
 				L5:	aload_0;
 					aload_1;
 					invokevirtual 16;		// applet/TheApplet.cipherFileByCard(Ljavacard/framework/APDU;)V
-					goto_w L26;
+					goto_w L34;
 				L6:	aload_0;
 					aload_1;
 					invokevirtual 17;		// applet/TheApplet.cipherAndUncipherNameByCard(Ljavacard/framework/APDU;)V
-					goto_w L26;
+					goto_w L34;
 				L7:	aload_0;
 					aload_1;
 					invokevirtual 18;		// applet/TheApplet.readFileFromCard(Ljavacard/framework/APDU;)V
-					goto L26;
+					goto_w L34;
 				L8:	aload_0;
 					aload_1;
 					invokevirtual 19;		// applet/TheApplet.writeFileToCard(Ljavacard/framework/APDU;)V
-					goto L26;
-				L9:	aload_0;
-					aload_1;
-					invokevirtual 20;		// applet/TheApplet.updateWritePIN(Ljavacard/framework/APDU;)V
-					goto L26;
+					goto_w L34;
+				L9:	getfield_b_this 2;		// boolean applet/TheApplet.PINsecurity
+					ifne L11;
 				L10:	aload_0;
 					aload_1;
-					invokevirtual 21;		// applet/TheApplet.updateReadPIN(Ljavacard/framework/APDU;)V
-					goto L26;
-				L11:	aload_0;
-					aload_1;
-					invokevirtual 22;		// applet/TheApplet.displayPINSecurity(Ljavacard/framework/APDU;)V
-					goto L26;
-				L12:	aload_0;
-					aload_1;
-					invokevirtual 23;		// applet/TheApplet.desactivateActivatePINSecurity(Ljavacard/framework/APDU;)V
-					goto L26;
+					invokevirtual 20;		// applet/TheApplet.updateWritePIN(Ljavacard/framework/APDU;)V
+					goto_w L34;
+				L11:	getfield_a_this 1;		// reference applet/TheApplet.pinWrite
+					invokevirtual 21;		// javacard/framework/OwnerPIN.isValidated()Z
+					ifne L13;
+				L12:	sspush 25345;
+					invokestatic 22;		// javacard/framework/ISOException.throwIt(S)V
 				L13:	aload_0;
 					aload_1;
-					invokevirtual 24;		// applet/TheApplet.enterReadPIN(Ljavacard/framework/APDU;)V
-					goto L26;
-				L14:	aload_0;
+					invokevirtual 20;		// applet/TheApplet.updateWritePIN(Ljavacard/framework/APDU;)V
+					goto_w L34;
+				L14:	getfield_b_this 2;		// boolean applet/TheApplet.PINsecurity
+					ifne L16;
+				L15:	aload_0;
 					aload_1;
-					invokevirtual 25;		// applet/TheApplet.enterWritePIN(Ljavacard/framework/APDU;)V
-					goto L26;
-				L15:	getfield_b_this 2;		// boolean applet/TheApplet.PINsecurity
-					ifne L17;
-				L16:	aload_0;
+					invokevirtual 23;		// applet/TheApplet.updateReadPIN(Ljavacard/framework/APDU;)V
+					goto L34;
+				L16:	getfield_a_this 0;		// reference applet/TheApplet.pinRead
+					invokevirtual 21;		// javacard/framework/OwnerPIN.isValidated()Z
+					ifne L18;
+				L17:	sspush 25345;
+					invokestatic 22;		// javacard/framework/ISOException.throwIt(S)V
+				L18:	aload_0;
 					aload_1;
-					invokevirtual 26;		// applet/TheApplet.readNameFromCard(Ljavacard/framework/APDU;)V
-					goto L26;
-				L17:	getfield_a_this 0;		// reference applet/TheApplet.pinRead
-					invokevirtual 27;		// javacard/framework/OwnerPIN.isValidated()Z
-					ifne L19;
-				L18:	sspush 25345;
-					invokestatic 28;		// javacard/framework/ISOException.throwIt(S)V
+					invokevirtual 23;		// applet/TheApplet.updateReadPIN(Ljavacard/framework/APDU;)V
+					goto L34;
 				L19:	aload_0;
 					aload_1;
-					invokevirtual 26;		// applet/TheApplet.readNameFromCard(Ljavacard/framework/APDU;)V
-					goto L26;
-				L20:	getfield_b_this 2;		// boolean applet/TheApplet.PINsecurity
-					ifne L22;
+					invokevirtual 24;		// applet/TheApplet.displayPINSecurity(Ljavacard/framework/APDU;)V
+					goto L34;
+				L20:	aload_0;
+					aload_1;
+					invokevirtual 25;		// applet/TheApplet.desactivateActivatePINSecurity(Ljavacard/framework/APDU;)V
+					goto L34;
 				L21:	aload_0;
 					aload_1;
-					invokevirtual 29;		// applet/TheApplet.writeNameToCard(Ljavacard/framework/APDU;)V
-					goto L26;
-				L22:	getfield_a_this 1;		// reference applet/TheApplet.pinWrite
-					invokevirtual 27;		// javacard/framework/OwnerPIN.isValidated()Z
-					ifne L24;
-				L23:	sspush 25345;
-					invokestatic 28;		// javacard/framework/ISOException.throwIt(S)V
+					invokevirtual 26;		// applet/TheApplet.enterReadPIN(Ljavacard/framework/APDU;)V
+					goto L34;
+				L22:	aload_0;
+					aload_1;
+					invokevirtual 27;		// applet/TheApplet.enterWritePIN(Ljavacard/framework/APDU;)V
+					goto L34;
+				L23:	getfield_b_this 2;		// boolean applet/TheApplet.PINsecurity
+					ifne L25;
 				L24:	aload_0;
 					aload_1;
+					invokevirtual 28;		// applet/TheApplet.readNameFromCard(Ljavacard/framework/APDU;)V
+					goto L34;
+				L25:	getfield_a_this 0;		// reference applet/TheApplet.pinRead
+					invokevirtual 21;		// javacard/framework/OwnerPIN.isValidated()Z
+					ifne L27;
+				L26:	sspush 25345;
+					invokestatic 22;		// javacard/framework/ISOException.throwIt(S)V
+				L27:	aload_0;
+					aload_1;
+					invokevirtual 28;		// applet/TheApplet.readNameFromCard(Ljavacard/framework/APDU;)V
+					goto L34;
+				L28:	getfield_b_this 2;		// boolean applet/TheApplet.PINsecurity
+					ifne L30;
+				L29:	aload_0;
+					aload_1;
 					invokevirtual 29;		// applet/TheApplet.writeNameToCard(Ljavacard/framework/APDU;)V
-					goto L26;
-				L25:	sspush 27904;
-					invokestatic 28;		// javacard/framework/ISOException.throwIt(S)V
-				L26:	return;
+					goto L34;
+				L30:	getfield_a_this 1;		// reference applet/TheApplet.pinWrite
+					invokevirtual 21;		// javacard/framework/OwnerPIN.isValidated()Z
+					ifne L32;
+				L31:	sspush 25345;
+					invokestatic 22;		// javacard/framework/ISOException.throwIt(S)V
+				L32:	aload_0;
+					aload_1;
+					invokevirtual 29;		// applet/TheApplet.writeNameToCard(Ljavacard/framework/APDU;)V
+					goto L34;
+				L33:	sspush 27904;
+					invokestatic 22;		// javacard/framework/ISOException.throwIt(S)V
+				L34:	return;
 		}
 
 		.method  updateCardKey(Ljavacard/framework/APDU;)V 128 {
@@ -456,12 +474,37 @@
 		}
 
 		.method  updateReadPIN(Ljavacard/framework/APDU;)V 135 {
-			.stack 0;
-			.locals 0;
+			.stack 6;
+			.locals 2;
 
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
-				L0:	return;
+				L0:	aload_1;
+					invokevirtual 13;		// javacard/framework/APDU.getBuffer()[B
+					astore_2;
+					aload_1;
+					invokevirtual 30;		// javacard/framework/APDU.setIncomingAndReceive()S
+					pop;
+					aload_2;
+					sconst_4;
+					baload;
+					newarray 11;
+					astore_3;
+					aload_2;
+					sconst_4;
+					aload_3;
+					sconst_0;
+					aload_2;
+					sconst_4;
+					baload;
+					invokestatic 31;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					pop;
+					getfield_a_this 0;		// reference applet/TheApplet.pinRead
+					aload_3;
+					sconst_0;
+					sconst_4;
+					invokevirtual 4;		// javacard/framework/OwnerPIN.update([BSB)V
+					return;
 		}
 
 		.method  displayPINSecurity(Ljavacard/framework/APDU;)V 136 {
@@ -487,7 +530,7 @@
 				L3:	aload_1;
 					sconst_0;
 					sconst_1;
-					invokevirtual 30;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+					invokevirtual 32;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
 					return;
 		}
 
@@ -516,7 +559,7 @@
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
 				L0:	aload_1;
-					invokevirtual 31;		// javacard/framework/APDU.setIncomingAndReceive()S
+					invokevirtual 30;		// javacard/framework/APDU.setIncomingAndReceive()S
 					pop;
 					aload_1;
 					invokevirtual 13;		// javacard/framework/APDU.getBuffer()[B
@@ -527,10 +570,10 @@
 					aload_2;
 					sconst_4;
 					baload;
-					invokevirtual 32;		// javacard/framework/OwnerPIN.check([BSB)Z
+					invokevirtual 33;		// javacard/framework/OwnerPIN.check([BSB)Z
 					ifne L2;
 				L1:	sspush 25344;
-					invokestatic 28;		// javacard/framework/ISOException.throwIt(S)V
+					invokestatic 22;		// javacard/framework/ISOException.throwIt(S)V
 				L2:	return;
 		}
 
@@ -544,7 +587,7 @@
 					invokevirtual 13;		// javacard/framework/APDU.getBuffer()[B
 					astore_2;
 					aload_1;
-					invokevirtual 31;		// javacard/framework/APDU.setIncomingAndReceive()S
+					invokevirtual 30;		// javacard/framework/APDU.setIncomingAndReceive()S
 					pop;
 					getfield_a_this 1;		// reference applet/TheApplet.pinWrite
 					aload_2;
@@ -552,10 +595,10 @@
 					aload_2;
 					sconst_4;
 					baload;
-					invokevirtual 32;		// javacard/framework/OwnerPIN.check([BSB)Z
+					invokevirtual 33;		// javacard/framework/OwnerPIN.check([BSB)Z
 					ifne L2;
 				L1:	sspush 25344;
-					invokestatic 28;		// javacard/framework/ISOException.throwIt(S)V
+					invokestatic 22;		// javacard/framework/ISOException.throwIt(S)V
 				L2:	return;
 		}
 
@@ -568,21 +611,21 @@
 				L0:	aload_1;
 					invokevirtual 13;		// javacard/framework/APDU.getBuffer()[B
 					astore_2;
-					getstatic_a 33;		// reference applet/TheApplet.studentName
+					getstatic_a 34;		// reference applet/TheApplet.studentName
 					sconst_1;
 					aload_2;
 					sconst_0;
-					getstatic_a 33;		// reference applet/TheApplet.studentName
+					getstatic_a 34;		// reference applet/TheApplet.studentName
 					sconst_0;
 					baload;
-					invokestatic 34;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					invokestatic 31;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
 					aload_1;
 					sconst_0;
-					getstatic_a 33;		// reference applet/TheApplet.studentName
+					getstatic_a 34;		// reference applet/TheApplet.studentName
 					sconst_0;
 					baload;
-					invokevirtual 30;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+					invokevirtual 32;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
 					return;
 		}
 
@@ -596,11 +639,11 @@
 					invokevirtual 13;		// javacard/framework/APDU.getBuffer()[B
 					astore_2;
 					aload_1;
-					invokevirtual 31;		// javacard/framework/APDU.setIncomingAndReceive()S
+					invokevirtual 30;		// javacard/framework/APDU.setIncomingAndReceive()S
 					pop;
 					aload_2;
 					sconst_4;
-					getstatic_a 33;		// reference applet/TheApplet.studentName
+					getstatic_a 34;		// reference applet/TheApplet.studentName
 					sconst_0;
 					aload_2;
 					sconst_4;
@@ -608,7 +651,7 @@
 					sconst_1;
 					sadd;
 					s2b;
-					invokestatic 34;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					invokestatic 31;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
 					return;
 		}

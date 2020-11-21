@@ -83,8 +83,30 @@ public class TheApplet extends Applet {
 			case CIPHERANDUNCIPHERNAMEBYCARD: cipherAndUncipherNameByCard( apdu ); break;
 			case READFILEFROMCARD: readFileFromCard( apdu ); break;
 			case WRITEFILETOCARD: writeFileToCard( apdu ); break;
-			case UPDATEWRITEPIN: updateWritePIN( apdu ); break;
-			case UPDATEREADPIN: updateReadPIN( apdu ); break;
+			case UPDATEWRITEPIN:
+				if(!PINsecurity)
+				{
+					updateWritePIN( apdu );
+				}
+				else
+				{
+					if ( ! pinWrite.isValidated() )
+					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
+					updateWritePIN( apdu );
+				}
+			break;
+			case UPDATEREADPIN:
+				if(!PINsecurity)
+				{
+					updateReadPIN( apdu );
+				}
+				else
+				{
+					if ( ! pinRead.isValidated() )
+					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
+					updateReadPIN( apdu );
+				}
+			break;
 			case DISPLAYPINSECURITY: displayPINSecurity( apdu ); break;
 			case DESACTIVATEACTIVATEPINSECURITY: desactivateActivatePINSecurity( apdu ); break;
 			case ENTERREADPIN: enterReadPIN( apdu ); break;
@@ -142,15 +164,28 @@ public class TheApplet extends Applet {
 	}
 
 
-	void updateWritePIN( APDU apdu ) {
+	void updateWritePIN( APDU apdu ) { // TO FIX
+
+		byte[] buffer = apdu.getBuffer();  
+		apdu.setIncomingAndReceive();
+		byte[] newpin = new byte[buffer[4]]; // buffer[4] = Lc
+		Util.arrayCopy(buffer, (byte)4, newpin, (byte)0, (byte)buffer[4]); // offset de 4bytes pour ne recup que le newpin, de size Lc
+		pinWrite.update(newpin, (short)0, (byte)buffer[4]); // update pinWrite avec newpin, de size Lc
 	}
 
 
-	void updateReadPIN( APDU apdu ) {
+	void updateReadPIN( APDU apdu ) { // TO FIX
+
+		byte[] buffer = apdu.getBuffer();  
+		apdu.setIncomingAndReceive();
+		byte[] newpin = new byte[buffer[4]];
+		Util.arrayCopy(buffer, (byte)4, newpin, (byte)0, (byte)buffer[4]);
+		pinRead.update(newpin, (short)0, (byte)buffer[4]);
+		
 	}
 
 
-	void displayPINSecurity( APDU apdu ) {
+	void displayPINSecurity( APDU apdu ) { // TO FIX
 
 		byte[] buffer = apdu.getBuffer();
 

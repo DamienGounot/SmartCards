@@ -224,6 +224,7 @@ public class TheClient {
 
 
 	void displayPINSecurity() {
+
 		byte[] header = {CLA,DISPLAYPINSECURITY, P1,P2};
 		byte[] command = new byte[(byte)((byte)header.length +(byte)1)];
 		System.arraycopy(header, (byte)0, command, (byte)0, (byte)header.length);
