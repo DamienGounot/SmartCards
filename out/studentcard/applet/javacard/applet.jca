@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Sat Nov 21 17:45:03 CET 2020
+// on Sun Nov 22 11:53:25 CET 2020
 
 .package applet {
 	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x6;
@@ -465,12 +465,39 @@
 		}
 
 		.method  updateWritePIN(Ljavacard/framework/APDU;)V 134 {
-			.stack 0;
-			.locals 0;
+			.stack 6;
+			.locals 2;
 
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
-				L0:	return;
+				L0:	aload_1;
+					invokevirtual 13;		// javacard/framework/APDU.getBuffer()[B
+					astore_2;
+					aload_1;
+					invokevirtual 30;		// javacard/framework/APDU.setIncomingAndReceive()S
+					pop;
+					aload_2;
+					sconst_4;
+					baload;
+					newarray 11;
+					astore_3;
+					aload_2;
+					sconst_4;
+					aload_3;
+					sconst_0;
+					aload_2;
+					sconst_4;
+					baload;
+					invokestatic 31;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					pop;
+					getfield_a_this 1;		// reference applet/TheApplet.pinWrite
+					aload_3;
+					sconst_0;
+					aload_2;
+					sconst_4;
+					baload;
+					invokevirtual 4;		// javacard/framework/OwnerPIN.update([BSB)V
+					return;
 		}
 
 		.method  updateReadPIN(Ljavacard/framework/APDU;)V 135 {
@@ -502,7 +529,9 @@
 					getfield_a_this 0;		// reference applet/TheApplet.pinRead
 					aload_3;
 					sconst_0;
+					aload_2;
 					sconst_4;
+					baload;
 					invokevirtual 4;		// javacard/framework/OwnerPIN.update([BSB)V
 					return;
 		}

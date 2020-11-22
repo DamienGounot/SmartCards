@@ -228,7 +228,7 @@ public class TheClient {
 		byte[] header = {CLA,DISPLAYPINSECURITY, P1,P2};
 		byte[] command = new byte[(byte)((byte)header.length +(byte)1)];
 		System.arraycopy(header, (byte)0, command, (byte)0, (byte)header.length);
-		command[4] = 1; // Le = 1 car attente de 1 byte
+		command[4] = 0; // Le = 0 car attente de n bytes
 
 		CommandAPDU cmd = new CommandAPDU( command);
 		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
