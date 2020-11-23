@@ -168,9 +168,7 @@ public class TheApplet extends Applet {
 
 		byte[] buffer = apdu.getBuffer();  
 		apdu.setIncomingAndReceive();
-		byte[] newpin = new byte[buffer[4]]; // buffer[4] = Lc
-		Util.arrayCopy(buffer, (byte)4, newpin, (byte)0, (byte)buffer[4]); // offset de 4bytes pour ne recup que le newpin, de size Lc
-		pinWrite.update(newpin, (short)0, (byte)buffer[4]); // update pinWrite avec newpin, de size Lc
+		pinWrite.update(buffer, (short)5, (byte)buffer[4]); // update pinWrite avec newpin, de size Lc
 	}
 
 
@@ -179,13 +177,12 @@ public class TheApplet extends Applet {
 		byte[] buffer = apdu.getBuffer();  
 		apdu.setIncomingAndReceive();
 		byte[] newpin = new byte[buffer[4]];
-		Util.arrayCopy(buffer, (byte)4, newpin, (byte)0, (byte)buffer[4]);
-		pinRead.update(newpin, (short)0, (byte)buffer[4]);
-		
+		pinRead.update(buffer, (short)5, (byte)buffer[4]); // update pinRead avec newpin, de size Lc
+
 	}
 
 
-	void displayPINSecurity( APDU apdu ) { // TO FIX
+	void displayPINSecurity( APDU apdu ){
 
 		byte[] buffer = apdu.getBuffer();
 
