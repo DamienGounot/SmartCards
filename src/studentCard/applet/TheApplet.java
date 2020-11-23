@@ -38,16 +38,17 @@ public class TheApplet extends Applet {
 	final static short NVRSIZE      = (short)1024;
 	static byte[] NVR               = new byte[NVRSIZE];
 
+	boolean PINsecurity;
 
 	protected TheApplet() {
 
 		byte[] _pinRead_ = {(byte)0x30,(byte)0x30,(byte)0x30,(byte)0x30}; // PIN code "0000"
 		byte[] _pinWrite_ = {(byte)0x31,(byte)0x31,(byte)0x31,(byte)0x31}; // PIN code "1111"
-
 		pinRead = new OwnerPIN((byte)3,(byte)8);  				// 3 tries 8=Max Size
 		pinRead.update(_pinRead_,(short)0,(byte)4); 				// from pincode, offset 0, length 4
 		pinWrite = new OwnerPIN((byte)3,(byte)8);  				// 3 tries 8=Max Size
 		pinWrite.update(_pinWrite_,(short)0,(byte)4); 				// from pincode, offset 0, length 4
+		PINsecurity = true;	// init PINsecurity to true
 		this.register();
 	}
 
@@ -82,20 +83,58 @@ public class TheApplet extends Applet {
 			case CIPHERANDUNCIPHERNAMEBYCARD: cipherAndUncipherNameByCard( apdu ); break;
 			case READFILEFROMCARD: readFileFromCard( apdu ); break;
 			case WRITEFILETOCARD: writeFileToCard( apdu ); break;
-			case UPDATEWRITEPIN: updateWritePIN( apdu ); break;
-			case UPDATEREADPIN: updateReadPIN( apdu ); break;
+			case UPDATEWRITEPIN:
+				if(!PINsecurity)
+				{
+					updateWritePIN( apdu );
+				}
+				else
+				{
+					if ( ! pinWrite.isValidated() )
+					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
+					updateWritePIN( apdu );
+				}
+			break;
+			case UPDATEREADPIN:
+				if(!PINsecurity)
+				{
+					updateReadPIN( apdu );
+				}
+				else
+				{
+					if ( ! pinRead.isValidated() )
+					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
+					updateReadPIN( apdu );
+				}
+			break;
 			case DISPLAYPINSECURITY: displayPINSecurity( apdu ); break;
 			case DESACTIVATEACTIVATEPINSECURITY: desactivateActivatePINSecurity( apdu ); break;
 			case ENTERREADPIN: enterReadPIN( apdu ); break;
 			case ENTERWRITEPIN: enterWritePIN( apdu ); break;
 			case READNAMEFROMCARD:
-				if ( ! pinRead.isValidated() )
+				if(!PINsecurity)
+				{
+					readNameFromCard( apdu );
+				}
+				else
+				{
+					if ( ! pinRead.isValidated() )
 					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
-				readNameFromCard( apdu ); break;
+					readNameFromCard( apdu );
+				}
+			break;
 			case WRITENAMETOCARD: 
-				if ( ! pinWrite.isValidated() )
+				if(!PINsecurity)
+				{
+					writeNameToCard( apdu );
+				}
+				else
+				{
+					if ( ! pinWrite.isValidated() )
 					ISOException.throwIt(SW_PIN_VERIFICATION_REQUIRED);
-				writeNameToCard( apdu ); break;
+					writeNameToCard( apdu );
+				}
+			break;
 			default: ISOException.throwIt(ISO7816.SW_INS_NOT_SUPPORTED);
 		}
 	}
@@ -125,19 +164,52 @@ public class TheApplet extends Applet {
 	}
 
 
-	void updateWritePIN( APDU apdu ) {
+	void updateWritePIN( APDU apdu ) { // TO FIX
+
+		byte[] buffer = apdu.getBuffer();  
+		apdu.setIncomingAndReceive();
+		pinWrite.update(buffer, (short)5, (byte)buffer[4]); // update pinWrite avec newpin, de size Lc
 	}
 
 
-	void updateReadPIN( APDU apdu ) {
+	void updateReadPIN( APDU apdu ) { // TO FIX
+
+		byte[] buffer = apdu.getBuffer();  
+		apdu.setIncomingAndReceive();
+		byte[] newpin = new byte[buffer[4]];
+		pinRead.update(buffer, (short)5, (byte)buffer[4]); // update pinRead avec newpin, de size Lc
+
 	}
 
 
-	void displayPINSecurity( APDU apdu ) {
+	void displayPINSecurity( APDU apdu ){
+
+		byte[] buffer = apdu.getBuffer();
+
+		if(PINsecurity)
+		{
+		buffer[0] = (byte)0x00; // pour avoir 2 bytes
+		buffer[1] = (byte)0x31; // envoit 1 si Pinsecurity enable
+		}
+		else
+		{
+		buffer[0] = (byte)0x00; // pour avoir 2 bytes
+		buffer[1] = (byte)0x30; // envoit 0 si Pinsecurity disable
+		}
+		
+		apdu.setOutgoingAndSend((short)0, (byte)2);
 	}
 
 
 	void desactivateActivatePINSecurity( APDU apdu ) {
+		if(PINsecurity) 
+		{
+			PINsecurity = false;
+		}
+		else
+		{
+			PINsecurity = true;
+		}
 	}
 
 

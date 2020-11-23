@@ -224,10 +224,29 @@ public class TheClient {
 
 
 	void displayPINSecurity() {
+
+		byte[] header = {CLA,DISPLAYPINSECURITY, P1,P2};
+		byte[] command = new byte[(byte)((byte)header.length +(byte)1)];
+		System.arraycopy(header, (byte)0, command, (byte)0, (byte)header.length);
+		command[4] = 0; // Le = 0 car attente de n bytes
+
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
+
+		byte[] bytes = resp.getBytes();
+
+	    String msg = "PIN security status: ";
+		msg += new StringBuffer("").append((char)bytes[1]);
+	    System.out.println(msg);
 	}
 
 
 	void desactivateActivatePINSecurity() {
+		byte[] header = {CLA,DESACTIVATEACTIVATEPINSECURITY, P1,P2};
+		byte[] command = new byte[(byte)header.length];
+		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
 	}
 
 
