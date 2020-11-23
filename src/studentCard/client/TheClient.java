@@ -234,11 +234,9 @@ public class TheClient {
 		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
 
 		byte[] bytes = resp.getBytes();
-		
 
 	    String msg = "PIN security status: ";
-	    for(int i=0; i<bytes.length-2;i++)
-		    msg += new StringBuffer("").append((char)bytes[i]);
+		msg += new StringBuffer("").append((char)bytes[1]);
 	    System.out.println(msg);
 	}
 

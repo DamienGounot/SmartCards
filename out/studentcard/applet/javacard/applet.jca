@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Sun Nov 22 11:53:25 CET 2020
+// on Mon Nov 23 08:46:14 CET 2020
 
 .package applet {
 	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x6;
@@ -549,16 +549,24 @@
 					ifeq L2;
 				L1:	aload_2;
 					sconst_0;
+					sconst_0;
+					bastore;
+					aload_2;
+					sconst_1;
 					bspush 49;
 					bastore;
 					goto L3;
 				L2:	aload_2;
 					sconst_0;
+					sconst_0;
+					bastore;
+					aload_2;
+					sconst_1;
 					bspush 48;
 					bastore;
 				L3:	aload_1;
 					sconst_0;
-					sconst_1;
+					sconst_2;
 					invokevirtual 32;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
 					return;
 		}

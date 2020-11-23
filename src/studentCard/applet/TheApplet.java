@@ -191,14 +191,16 @@ public class TheApplet extends Applet {
 
 		if(PINsecurity)
 		{
-		buffer[0] = (byte)0x31; // envoit 1 si Pinsecurity enable
+		buffer[0] = (byte)0x00; // pour avoir 2 bytes
+		buffer[1] = (byte)0x31; // envoit 1 si Pinsecurity enable
 		}
 		else
 		{
-		buffer[0] = (byte)0x30; // envoit 0 si Pinsecurity disable
+		buffer[0] = (byte)0x00; // pour avoir 2 bytes
+		buffer[1] = (byte)0x30; // envoit 0 si Pinsecurity disable
 		}
 		
-		apdu.setOutgoingAndSend((short)0, (byte)1);
+		apdu.setOutgoingAndSend((short)0, (byte)2);
 	}
 
 
