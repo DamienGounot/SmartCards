@@ -39,6 +39,11 @@ public class TheApplet extends Applet {
 	static byte[] NVR               = new byte[NVRSIZE];
 
 	boolean PINsecurity;
+	static byte[] studentFile = new byte[16384]; // 2Ko
+	final static short MAXLENGTH = (short)127;
+	static final byte P1_FILENAME 	 		= (byte)0x01;
+	static final byte P1_NBAPDUMAX 	 		= (byte)0x02;
+	static final byte P1_LASTAPDUMAX 	 	= (byte)0x03;
 
 	protected TheApplet() {
 

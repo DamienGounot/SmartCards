@@ -33,6 +33,10 @@ public class TheClient {
 	static final byte READNAMEFROMCARD			= (byte)0x02;
 	static final byte WRITENAMETOCARD			= (byte)0x01;
 
+	final static short MAXLENGTH = (short)127;
+	static final byte P1_FILENAME 	 		= (byte)0x01;
+	static final byte P1_NBAPDUMAX 	 		= (byte)0x02;
+	static final byte P1_LASTAPDUMAX 	 	= (byte)0x03;
 
 	public TheClient() {
 		try {
@@ -176,6 +180,33 @@ public class TheClient {
 
 
 	void writeFileToCard() {
+		System.out.println("Saisissez le fichier a ecrire sur la carte:");
+		String filename = readKeyboard();
+		byte filenameSize = (byte)filename.getBytes().length;
+		int nbAPDUMax = 0;
+		int lastAPDUsize = 0;
+
+		/* envoi size filename et filename */
+		byte[] header = {CLA,WRITEFILETOCARD, P1_FILENAME,P2};
+		byte[] optional = new byte[(byte)1 + filenameSize];
+		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		optional[0] = filenameSize;
+		System.arraycopy(filename.getBytes(), (byte)0, optional, (byte)1, optional[0]);
+		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
+		System.arraycopy(optional,(byte)0,command,(byte)header.length,(byte)optional.length);
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
+		/* end */
+
+
+		// DataInputStream filedata = new DataInputStream(new FileInputStream(filename));
+		// int return_value =0;
+		// while( (return_value = filedata.read(null,0,MAXLENGTH)) !=-1 ) {
+		// 	nbAPDUMax ++;
+			
+		// }
+
+
 	}
 
 
