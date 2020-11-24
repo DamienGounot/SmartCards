@@ -34,10 +34,10 @@ public class TheClient {
 	static final byte WRITENAMETOCARD			= (byte)0x01;
 
 	final static short MAXLENGTH = (short)127;
-	static final byte P1_FILENAME 	 		= (byte)0x01;
-	static final byte P1_NBAPDUMAX 	 		= (byte)0x02;
-	static final byte P1_LASTAPDUMAX 	 	= (byte)0x03;
-
+	static final byte P1_FILENAME 	 	= (byte)0x01;
+	static final byte P1_BLOC 	 		= (byte)0x02;
+	static final byte P1_VAR 	 		= (byte)0x03;
+	static 	byte[] dataBlock = new byte[127];
 	public TheClient() {
 		try {
 			SmartCard.start();
@@ -187,7 +187,8 @@ public class TheClient {
 		int lastAPDUsize = 0;
 
 		/* envoi size filename et filename */
-		byte[] header = {CLA,WRITEFILETOCARD, P1_FILENAME,P2};
+		System.out.println("==========Requete: Filename==========");
+		byte[] header = {CLA,WRITEFILETOCARD, P1_FILENAME,P2}; // requete de type "filename" ( contient la taille de filename et filename)
 		byte[] optional = new byte[(byte)1 + filenameSize];
 		byte[] command = new byte[(byte)header.length + (byte)optional.length];
 		optional[0] = filenameSize;
@@ -196,17 +197,77 @@ public class TheClient {
 		System.arraycopy(optional,(byte)0,command,(byte)header.length,(byte)optional.length);
 		CommandAPDU cmd = new CommandAPDU( command);
 		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
+		System.out.println("==========Fin Requete: Filename==========");
 		/* end */
 
+	
+		try{
+			DataInputStream filedata = new DataInputStream(new FileInputStream(filename));
+		
+		int return_value = 0;
 
-		// DataInputStream filedata = new DataInputStream(new FileInputStream(filename));
-		// int return_value =0;
-		// while( (return_value = filedata.read(null,0,MAXLENGTH)) !=-1 ) {
-		// 	nbAPDUMax ++;
-			
-		// }
+		while( (return_value = filedata.read(dataBlock,0,(byte)127)) !=-1 ) {
+				System.out.println("return :"+return_value);
+			if(return_value == 127){
+				nbAPDUMax ++;
+				System.out.println("nbAPDUMax :"+nbAPDUMax);
+				
+				/* envoi d'un bloc */
+				System.out.println("==========Requete: Bloc==========");
+				byte[] header1 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)(nbAPDUMax-1)}; // requete de type "bloc" (contient un bloc de 127 octets) avec P2 = indice du bloc
+				System.out.println("ICI CA PLANTE PAS");
+				byte[] optional1 = new byte[(byte)1 + (byte)return_value];
+				System.out.println("Header: "+ (byte)header1.length + "Optionnal: "+(byte)optional1.length);
+				byte[] command1 = new byte[(byte)header1.length + (byte)optional1.length];
+				System.out.println("ICI CA PLANTE");
+				optional1[0] = (byte)return_value;
+				System.arraycopy(dataBlock, (byte)0, optional1, (byte)1, optional1[0]);
+				System.arraycopy(header1,(byte)0,command1,(byte)0,(byte)header1.length);
+				System.arraycopy(optional1,(byte)0,command1,(byte)header1.length,(byte)optional1.length);
+				CommandAPDU cmd1 = new CommandAPDU( command1);
+				ResponseAPDU resp1 = this.sendAPDU( cmd1, DISPLAY );
+				System.out.println("==========Fin Requete: Bloc==========");
+				/* end */
 
+			}else{
 
+				lastAPDUsize = return_value;
+				System.out.println("lastAPDUsize :"+lastAPDUsize);
+
+				/* envoi du DERNIER bloc */
+				System.out.println("==========Requete: Last Bloc==========");
+				byte[] header2 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)nbAPDUMax}; // requete de type "bloc" (contient un bloc de lastAPDUsize octets) avec P2 = indice du bloc
+				byte[] optional2 = new byte[(byte)1 + (byte)lastAPDUsize];
+				byte[] command2 = new byte[(byte)header2.length + (byte)optional2.length];
+				optional2[0] = (byte)lastAPDUsize;
+				System.arraycopy(dataBlock, (byte)0, optional2, (byte)1, optional2[0]);
+				System.arraycopy(header2,(byte)0,command2,(byte)0,(byte)header2.length);
+				System.arraycopy(optional2,(byte)0,command2,(byte)header2.length,(byte)optional2.length);
+				CommandAPDU cmd2 = new CommandAPDU( command2);
+				ResponseAPDU resp2 = this.sendAPDU( cmd2, DISPLAY );
+				System.out.println("==========Fin Requete: Last Bloc==========");
+				/* end */
+
+				/* envoi des valeurs */
+				System.out.println("==========Requete: Valeurs Variables==========");
+				byte[] header3 = {CLA,WRITEFILETOCARD,P1_VAR,P2}; // requete de type "var" (contient nbAPDUMax et lastAPDUsize)
+				byte[] optional3 = {(byte)0x02,(byte)nbAPDUMax,(byte)lastAPDUsize};
+				byte[] command3 = new byte[(byte)header3.length + (byte)optional3.length];
+				System.arraycopy(header3,(byte)0,command3,(byte)0,(byte)header3.length);
+				System.arraycopy(optional3,(byte)0,command3,(byte)header3.length,(byte)optional3.length);
+				CommandAPDU cmd3 = new CommandAPDU( command3);
+				ResponseAPDU resp3 = this.sendAPDU( cmd3, DISPLAY );
+				/* end */
+				System.out.println("==========Fin Requete: Valeurs Variables==========");
+
+				System.out.println("ENDING: nbAPDUMax :"+nbAPDUMax+"; lastAPDUsize :"+lastAPDUsize);
+			}
+
+		}
+
+		}catch(Exception e){
+			System.out.println(e);
+		}
 	}
 
 
