@@ -169,7 +169,7 @@ public class TheApplet extends Applet {
 	}
 
 
-	void updateWritePIN( APDU apdu ) { // TO FIX
+	void updateWritePIN( APDU apdu ) {
 
 		byte[] buffer = apdu.getBuffer();  
 		apdu.setIncomingAndReceive();
@@ -177,7 +177,7 @@ public class TheApplet extends Applet {
 	}
 
 
-	void updateReadPIN( APDU apdu ) { // TO FIX
+	void updateReadPIN( APDU apdu ) { 
 
 		byte[] buffer = apdu.getBuffer();  
 		apdu.setIncomingAndReceive();
