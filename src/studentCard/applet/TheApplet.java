@@ -39,8 +39,8 @@ public class TheApplet extends Applet {
 	static byte[] NVR               = new byte[NVRSIZE];
 
 	boolean PINsecurity;
-	static byte[] studentFile = new byte[8192]; // 1Ko
-	final static short MAXLENGTH = (short)127;
+	static byte[] file = new byte[8192]; // 1Ko
+	final static short MAXLENGTH = (short)126;
 	static final byte P1_FILENAME 	 	= (byte)0x01;
 	static final byte P1_BLOC 	 		= (byte)0x02;
 	static final byte P1_VAR 	 		= (byte)0x03;
@@ -166,6 +166,22 @@ public class TheApplet extends Applet {
 
 
 	void writeFileToCard( APDU apdu ) {
+		byte[] buffer = apdu.getBuffer();  
+		apdu.setIncomingAndReceive();
+		
+		switch(buffer[2]){
+			case P1_FILENAME:
+			Util.arrayCopy(buffer, (byte)4, file, (byte)0, (byte)(buffer[4]+(byte)1));
+			break;
+			case P1_BLOC:
+			byte offset = (byte)(((byte)1 + buffer[0] + (byte)2) + (buffer[3] * (byte)MAXLENGTH));
+			Util.arrayCopy(buffer, (byte)5, file, offset, buffer[4]);
+			break;
+			case P1_VAR:
+			Util.arrayCopy(buffer, (byte)5, file, buffer[0],buffer[4]);
+			break;
+			default:
+		}
 	}
 
 

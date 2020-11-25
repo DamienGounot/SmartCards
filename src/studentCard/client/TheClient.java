@@ -211,7 +211,7 @@ public class TheClient {
 			if(return_value == MAXLENGTH){
 				nbAPDUMax ++;
 				System.out.println("nbAPDUMax :"+nbAPDUMax);
-				
+				System.out.println("Indice du bloc :"+(nbAPDUMax-1));
 				/* envoi d'un bloc */
 				System.out.println("==========Requete: Bloc==========");
 				byte[] header1 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)(nbAPDUMax-1)}; // requete de type "bloc" (contient un bloc de 126 octets) avec P2 = indice du bloc
@@ -230,7 +230,7 @@ public class TheClient {
 
 				lastAPDUsize = return_value;
 				System.out.println("lastAPDUsize :"+lastAPDUsize);
-
+				System.out.println("Indice du bloc :"+(nbAPDUMax));
 				/* envoi du DERNIER bloc */
 				System.out.println("==========Requete: Last Bloc==========");
 				byte[] header2 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)nbAPDUMax}; // requete de type "bloc" (contient un bloc de lastAPDUsize octets) avec P2 = indice du bloc
