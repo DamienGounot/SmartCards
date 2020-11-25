@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Wed Nov 25 09:47:58 CET 2020
+// on Wed Nov 25 12:29:08 CET 2020
 
 .package applet {
 	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x6;
@@ -105,13 +105,15 @@
 		// 30
 		virtualMethodRef 0.10.6()S;		// javacard/framework/APDU.setIncomingAndReceive()S
 		// 31
-		virtualMethodRef 0.10.8(SS)V;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+		staticFieldRef byte[] TheApplet/file;
 		// 32
-		virtualMethodRef 0.9.1([BSB)Z;		// javacard/framework/OwnerPIN.check([BSB)Z
-		// 33
-		staticFieldRef byte[] TheApplet/studentName;
-		// 34
 		staticMethodRef 0.16.1([BS[BSS)S;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+		// 33
+		virtualMethodRef 0.10.8(SS)V;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+		// 34
+		virtualMethodRef 0.9.1([BSB)Z;		// javacard/framework/OwnerPIN.check([BSB)Z
+		// 35
+		staticFieldRef byte[] TheApplet/studentName;
 	}
 
 	.class public TheApplet 0 extends 0.3 {		// extends javacard/framework/Applet
@@ -461,12 +463,74 @@
 		}
 
 		.method  writeFileToCard(Ljavacard/framework/APDU;)V 133 {
-			.stack 0;
-			.locals 0;
+			.stack 6;
+			.locals 2;
 
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
-				L0:	return;
+				L0:	aload_1;
+					invokevirtual 13;		// javacard/framework/APDU.getBuffer()[B
+					astore_2;
+					aload_1;
+					invokevirtual 30;		// javacard/framework/APDU.setIncomingAndReceive()S
+					pop;
+					aload_2;
+					sconst_2;
+					baload;
+					stableswitch L4 1 3 L1 L2 L3;
+				L1:	aload_2;
+					sconst_4;
+					getstatic_a 31;		// reference applet/TheApplet.file
+					sconst_0;
+					aload_2;
+					sconst_4;
+					baload;
+					sconst_1;
+					sadd;
+					s2b;
+					invokestatic 32;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					pop;
+					goto L4;
+				L2:	sconst_1;
+					getstatic_a 31;		// reference applet/TheApplet.file
+					sconst_0;
+					baload;
+					sadd;
+					sconst_2;
+					sadd;
+					aload_2;
+					sconst_3;
+					baload;
+					bspush 126;
+					smul;
+					sadd;
+					sstore_3;
+					aload_2;
+					sconst_5;
+					getstatic_a 31;		// reference applet/TheApplet.file
+					sload_3;
+					aload_2;
+					sconst_4;
+					baload;
+					invokestatic 32;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					pop;
+					goto L4;
+				L3:	aload_2;
+					sconst_5;
+					getstatic_a 31;		// reference applet/TheApplet.file
+					sconst_1;
+					getstatic_a 31;		// reference applet/TheApplet.file
+					sconst_0;
+					baload;
+					sadd;
+					s2b;
+					aload_2;
+					sconst_4;
+					baload;
+					invokestatic 32;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					pop;
+					goto L4;
+				L4:	return;
 		}
 
 		.method  updateWritePIN(Ljavacard/framework/APDU;)V 134 {
@@ -549,7 +613,7 @@
 				L3:	aload_1;
 					sconst_0;
 					sconst_2;
-					invokevirtual 31;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+					invokevirtual 33;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
 					return;
 		}
 
@@ -589,7 +653,7 @@
 					aload_2;
 					sconst_4;
 					baload;
-					invokevirtual 32;		// javacard/framework/OwnerPIN.check([BSB)Z
+					invokevirtual 34;		// javacard/framework/OwnerPIN.check([BSB)Z
 					ifne L2;
 				L1:	sspush 25344;
 					invokestatic 22;		// javacard/framework/ISOException.throwIt(S)V
@@ -614,7 +678,7 @@
 					aload_2;
 					sconst_4;
 					baload;
-					invokevirtual 32;		// javacard/framework/OwnerPIN.check([BSB)Z
+					invokevirtual 34;		// javacard/framework/OwnerPIN.check([BSB)Z
 					ifne L2;
 				L1:	sspush 25344;
 					invokestatic 22;		// javacard/framework/ISOException.throwIt(S)V
@@ -630,21 +694,21 @@
 				L0:	aload_1;
 					invokevirtual 13;		// javacard/framework/APDU.getBuffer()[B
 					astore_2;
-					getstatic_a 33;		// reference applet/TheApplet.studentName
+					getstatic_a 35;		// reference applet/TheApplet.studentName
 					sconst_1;
 					aload_2;
 					sconst_0;
-					getstatic_a 33;		// reference applet/TheApplet.studentName
+					getstatic_a 35;		// reference applet/TheApplet.studentName
 					sconst_0;
 					baload;
-					invokestatic 34;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					invokestatic 32;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
 					aload_1;
 					sconst_0;
-					getstatic_a 33;		// reference applet/TheApplet.studentName
+					getstatic_a 35;		// reference applet/TheApplet.studentName
 					sconst_0;
 					baload;
-					invokevirtual 31;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
+					invokevirtual 33;		// javacard/framework/APDU.setOutgoingAndSend(SS)V
 					return;
 		}
 
@@ -662,7 +726,7 @@
 					pop;
 					aload_2;
 					sconst_4;
-					getstatic_a 33;		// reference applet/TheApplet.studentName
+					getstatic_a 35;		// reference applet/TheApplet.studentName
 					sconst_0;
 					aload_2;
 					sconst_4;
@@ -670,7 +734,7 @@
 					sconst_1;
 					sadd;
 					s2b;
-					invokestatic 34;		// javacard/framework/Util.arrayCopy([BS[BSS)S
+					invokestatic 32;		// javacard/framework/Util.arrayCopy([BS[BSS)S
 					pop;
 					return;
 		}

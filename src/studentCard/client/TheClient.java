@@ -212,6 +212,10 @@ public class TheClient {
 				nbAPDUMax ++;
 				System.out.println("nbAPDUMax :"+nbAPDUMax);
 				System.out.println("Indice du bloc :"+(nbAPDUMax-1));
+				short offset = (short)(((byte)1 + (byte)8 + (byte)2) + ((byte)(nbAPDUMax-1) * (byte)MAXLENGTH));
+				System.out.println("offset value: "+offset);
+
+
 				/* envoi d'un bloc */
 				System.out.println("==========Requete: Bloc==========");
 				byte[] header1 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)(nbAPDUMax-1)}; // requete de type "bloc" (contient un bloc de 126 octets) avec P2 = indice du bloc
@@ -226,11 +230,18 @@ public class TheClient {
 				System.out.println("==========Fin Requete: Bloc==========");
 				/* end */
 
+
 			}else{
 
 				lastAPDUsize = return_value;
 				System.out.println("lastAPDUsize :"+lastAPDUsize);
 				System.out.println("Indice du bloc :"+(nbAPDUMax));
+
+				short offset = (short)(((byte)1 + (byte)8 + (byte)2) + ((byte)(nbAPDUMax) * (byte)MAXLENGTH));
+				System.out.println("offset value: "+offset);
+
+
+
 				/* envoi du DERNIER bloc */
 				System.out.println("==========Requete: Last Bloc==========");
 				byte[] header2 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)nbAPDUMax}; // requete de type "bloc" (contient un bloc de lastAPDUsize octets) avec P2 = indice du bloc
@@ -244,8 +255,11 @@ public class TheClient {
 				ResponseAPDU resp2 = this.sendAPDU( cmd2, DISPLAY );
 				System.out.println("==========Fin Requete: Last Bloc==========");
 				/* end */
+
 				
 				System.out.println("ENDING: nbAPDUMax :"+nbAPDUMax+"; lastAPDUsize :"+lastAPDUsize);
+
+				
 				/* envoi des valeurs */
 				System.out.println("==========Requete: Valeurs Variables==========");
 				byte[] header3 = {CLA,WRITEFILETOCARD,P1_VAR,P2}; // requete de type "var" (contient nbAPDUMax et lastAPDUsize)
