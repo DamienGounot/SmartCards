@@ -210,9 +210,9 @@ public class TheClient {
 				System.out.println("return :"+return_value);
 			if(return_value == MAXLENGTH){
 				nbAPDUMax ++;
-				System.out.println("nbAPDUMax :"+nbAPDUMax);
+
 				System.out.println("Indice du bloc :"+(nbAPDUMax-1));
-				short offset = (short)(((byte)1 + (byte)8 + (byte)2) + ((byte)(nbAPDUMax-1) * (byte)MAXLENGTH));
+				short offset = (short)(((byte)1 + (byte)filename.getBytes().length + (byte)2) + ((byte)(nbAPDUMax-1) * (byte)MAXLENGTH));
 				System.out.println("offset value: "+offset);
 
 
@@ -234,9 +234,8 @@ public class TheClient {
 			}else{
 
 				lastAPDUsize = return_value;
-				System.out.println("lastAPDUsize :"+lastAPDUsize);
-				System.out.println("Indice du bloc :"+(nbAPDUMax));
 
+				System.out.println("Indice du bloc :"+(nbAPDUMax));
 				short offset = (short)(((byte)1 + (byte)8 + (byte)2) + ((byte)(nbAPDUMax) * (byte)MAXLENGTH));
 				System.out.println("offset value: "+offset);
 
@@ -257,9 +256,9 @@ public class TheClient {
 				/* end */
 
 				
-				System.out.println("ENDING: nbAPDUMax :"+nbAPDUMax+"; lastAPDUsize :"+lastAPDUsize);
+				System.out.println("nbAPDUMax :"+nbAPDUMax+"; lastAPDUsize :"+lastAPDUsize+"; Total length: "+(nbAPDUMax*MAXLENGTH+lastAPDUsize)+"bytes");
 
-				
+
 				/* envoi des valeurs */
 				System.out.println("==========Requete: Valeurs Variables==========");
 				byte[] header3 = {CLA,WRITEFILETOCARD,P1_VAR,P2}; // requete de type "var" (contient nbAPDUMax et lastAPDUsize)
