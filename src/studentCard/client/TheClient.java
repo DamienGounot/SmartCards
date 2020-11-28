@@ -35,6 +35,7 @@ public class TheClient {
 	static final byte P1_FILENAME 	 	= (byte)0x01;
 	static final byte P1_BLOC 	 		= (byte)0x02;
 	static final byte P1_VAR 	 		= (byte)0x03;
+	static final byte P1_LASTBLOCK 	 		= (byte)0x04;
 	static 	byte[] dataBlock = new byte[MAXLENGTH];
 	public TheClient() {
 		try {
@@ -174,28 +175,76 @@ public class TheClient {
 
 
 	void readFileFromCard() {
-		byte[] header = {CLA,READFILEFROMCARD, P1,P2}; 
+
+		/* Read filename */
+		System.out.println("==========Requete: Filename==========");
+		byte[] header = {CLA,READFILEFROMCARD, P1_FILENAME,P2}; 
 		byte[] optional = {0x00};
 		byte[] command = new byte[(byte)header.length + (byte)optional.length];
 		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
 		System.arraycopy(optional,(byte)0,command,(byte)header.length,(byte)optional.length);
 		CommandAPDU cmd = new CommandAPDU( command);
 		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
+		System.out.println("==========Fin Requete: Filename==========");
+		/* end */
 
 		byte[] bytes = resp.getBytes();
-		
 		String filename = "";
 	    for(int i=0; i<bytes.length-2;i++)
 		filename += new StringBuffer("").append((char)bytes[i]);
 
-		bytes = resp.getBytes();
+
+
+		/* Read  Valeurs Variables nbAPDUMax et lastAPDUsize */
+		System.out.println("==========Requete: Valeurs Variables==========");
+		byte[] header1 = {CLA,READFILEFROMCARD, P1_VAR,P2}; 
+		byte[] optional1 = {0x00};
+		byte[] command1 = new byte[(byte)header1.length + (byte)optional1.length];
+		System.arraycopy(header1,(byte)0,command1,(byte)0,(byte)header1.length);
+		System.arraycopy(optional1,(byte)0,command1,(byte)header1.length,(byte)optional1.length);
+		CommandAPDU cmd1 = new CommandAPDU( command1);
+		ResponseAPDU resp1 = this.sendAPDU( cmd1, DISPLAY );
+		System.out.println("==========Fin Requete: Valeurs Variables==========");
+		/* end */
+
+		bytes = resp1.getBytes();
 		int nbAPDUMax = bytes[0];
 		int lastAPDUsize = bytes[1];
 		System.out.println("RECEPTION: nbAPDUMAx: "+nbAPDUMax+"; lastAPDUsize: "+lastAPDUsize);
 
+
+
+
 		try{
 			DataOutputStream filedata = new DataOutputStream(new FileOutputStream("retour_"+filename));			
-			
+
+
+			for(int indice = 0 ; indice < nbAPDUMax; indice++)
+			{
+
+				/* Requete bloc d'indice P2*/
+				System.out.println("==========Requete: Bloc==========");
+				byte[] command2 = {CLA,READFILEFROMCARD, P1_BLOC,(byte)indice,0x00}; 
+				CommandAPDU cmd2 = new CommandAPDU( command2);
+				ResponseAPDU resp2 = this.sendAPDU( cmd2, DISPLAY );
+				System.out.println("==========Fin Requete: Bloc==========");
+				/* end */				
+
+				byte[] block = resp2.getBytes();
+
+				// A mettre dans le fichier
+			}
+
+				/* Requete dernier bloc*/
+				System.out.println("==========Requete: Last Bloc==========");
+				byte[] command2 = {CLA,READFILEFROMCARD, P1_LASTBLOCK,P2,0x00}; 
+				CommandAPDU cmd2 = new CommandAPDU( command2);
+				ResponseAPDU resp2 = this.sendAPDU( cmd2, DISPLAY );
+				System.out.println("==========Fin Requete: Last Bloc==========");
+				/* end */		
+				
+				
+				// A mettre dans le fichier
 
 		}catch(Exception e){
 			System.out.println(e);
