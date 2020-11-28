@@ -228,11 +228,15 @@ public class TheClient {
 				CommandAPDU cmd2 = new CommandAPDU( command2);
 				ResponseAPDU resp2 = this.sendAPDU( cmd2, DISPLAY );
 				System.out.println("==========Fin Requete: Bloc==========");
-				/* end */				
+				/* end */
+
+				//short offset = (short)((((byte)1 + (byte)8) + (byte)2) + ((byte)(indice) * (byte)MAXLENGTH));
+				//System.out.println("L'Offset coté applet etait de: "+offset);
 
 				byte[] block = resp2.getBytes();
-
+				
 				// A mettre dans le fichier
+				filedata.write(block, 0, (block.length-2));
 			}
 
 				/* Requete dernier bloc*/
@@ -242,9 +246,10 @@ public class TheClient {
 				ResponseAPDU resp2 = this.sendAPDU( cmd2, DISPLAY );
 				System.out.println("==========Fin Requete: Last Bloc==========");
 				/* end */		
-				
+				byte[] block = resp2.getBytes();
 				
 				// A mettre dans le fichier
+				filedata.write(block,0, (block.length-2));
 
 		}catch(Exception e){
 			System.out.println(e);
