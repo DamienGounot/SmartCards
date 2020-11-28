@@ -7,8 +7,6 @@ import opencard.core.util.*;
 import opencard.opt.util.*;
 
 
-
-
 public class TheClient {
 
 	private PassThruCardService servClient = null;
@@ -176,6 +174,32 @@ public class TheClient {
 
 
 	void readFileFromCard() {
+		byte[] header = {CLA,READFILEFROMCARD, P1,P2}; 
+		byte[] optional = {0x00};
+		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
+		System.arraycopy(optional,(byte)0,command,(byte)header.length,(byte)optional.length);
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
+
+		byte[] bytes = resp.getBytes();
+		
+		String filename = "";
+	    for(int i=0; i<bytes.length-2;i++)
+		filename += new StringBuffer("").append((char)bytes[i]);
+
+		bytes = resp.getBytes();
+		int nbAPDUMax = bytes[0];
+		int lastAPDUsize = bytes[1];
+		System.out.println("RECEPTION: nbAPDUMAx: "+nbAPDUMax+"; lastAPDUsize: "+lastAPDUsize);
+
+		try{
+			DataOutputStream filedata = new DataOutputStream(new FileOutputStream("retour_"+filename));			
+			
+
+		}catch(Exception e){
+			System.out.println(e);
+		}
 	}
 
 

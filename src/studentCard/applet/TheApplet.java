@@ -162,6 +162,37 @@ public class TheApplet extends Applet {
 
 
 	void readFileFromCard( APDU apdu ) {
+		/* envoi filename */
+		byte[] buffer = apdu.getBuffer();
+		Util.arrayCopy(file, (byte)1, buffer, (byte)0, file[0]);
+		apdu.setOutgoingAndSend((short)0, file[0]);
+		/* end */
+
+		/* envoi parametre nbAPDUMax et lastAPDUsize */
+		buffer = apdu.getBuffer();
+		Util.arrayCopy(file, (byte)(file[0]+(byte)1), buffer, (byte)0, (byte)2);
+		apdu.setOutgoingAndSend((short)0, (byte)2);
+		/* end */
+
+		byte nbAPDUMax = file[(byte)(file[0]+(byte)1)];
+		byte lastAPDUsize = file[(byte)(file[0]+(byte)2)];
+
+		// for(short i = 0; i < nbAPDUMax;i++)
+		// {
+		// 	/* envoi d'un bloc */
+		// 	short offset = (short)((((byte)1 + (byte)file[0]) + (byte)2) + ((byte)(i) * (byte)MAXLENGTH));
+		// 	buffer = apdu.getBuffer();
+		// 	Util.arrayCopy(file, offset, buffer, (byte)0, (byte)MAXLENGTH);
+		// 	apdu.setOutgoingAndSend((short)0, (byte)MAXLENGTH);
+		// 	/* end */
+		// }
+
+		// /* envoi du dernier bloc */
+		// short offset = (short)((((byte)1 + (byte)file[0]) + (byte)2) + ((byte)(nbAPDUMax) * (byte)MAXLENGTH));
+		// buffer = apdu.getBuffer();
+		// Util.arrayCopy(file, offset, buffer, (byte)0, (byte)lastAPDUsize);
+		// apdu.setOutgoingAndSend((short)0, (byte)lastAPDUsize);
+		// /* end */
 	}
 
 
