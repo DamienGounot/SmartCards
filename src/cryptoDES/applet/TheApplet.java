@@ -138,24 +138,32 @@ public class TheApplet extends Applet {
 		testCipherGeneric( cDES_ECB_NOPAD_dec, KeyBuilder.LENGTH_DES, NBTESTSDESUNCIPHER   ); return;
 
 	case INS_DES_ECB_NOPAD_ENC: if( DES_ECB_NOPAD )
-		cipherGeneric( apdu, cDES_ECB_NOPAD_enc, KeyBuilder.LENGTH_DES ); return;
+		cipherGeneric( apdu, cDES_ECB_NOPAD_enc); return;
 	case INS_DES_ECB_NOPAD_DEC: if( DES_ECB_NOPAD ) 
-		cipherGeneric( apdu, cDES_ECB_NOPAD_dec, KeyBuilder.LENGTH_DES  ); return;
+		cipherGeneric( apdu, cDES_ECB_NOPAD_dec); return;
 	    }
 	} catch( Exception e ) {
 	}
     }
 
 
-	private void cipherGeneric( APDU apdu, Cipher cipher, short keyLength ) {
-		// Write the method ciphering/unciphering data from the computer.
-		// The result is sent back to the computer.
+	private void cipherGeneric( APDU apdu, Cipher cipher) {
+        byte[] buffer = apdu.getBuffer();
+        
+        /*Reception de la commande Client*/
+        apdu.setIncomingAndReceive();
+        byte Lc = buffer[4];
+        /*Cipher*/
+        cipher.doFinal( buffer, (short)5, Lc, buffer, (short)0);
+        /*Renvoi cipher vers Client*/
+        apdu.setOutgoingAndSend((short)0, Lc);
+
 	}
 
 
 	private void testCipherGeneric( Cipher cipher, short keyLength, short nbLoops ) {
 		for( i = 0; i < nbLoops; i++ )
-			cipher.doFinal( dataToCipher, (short)0, (short)(keyLength/8), ciphered, (short)0 );
+			cipher.doFinal( dataToCipher, (short)0, (short)(keyLength/8), ciphered, (short)0);
 	}
 
 
