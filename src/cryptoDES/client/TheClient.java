@@ -179,13 +179,34 @@ public class TheClient {
     
     private byte[] uncipherDES_ECB_NOPAD( byte[] challenge, boolean display ) {
 	    return cipherGeneric( INS_DES_ECB_NOPAD_DEC, challenge );
-    } 
+    }
 
 
     private byte[] cipherGeneric( byte typeINS, byte[] challenge ) {
-	    byte[] result = new byte[challenge.length];
-	    // TO COMPLETE
-	    return result;
+		byte[] result = new byte[challenge.length];
+
+		/* Forgage de la requete pour cippher/uncipher*/
+
+		byte[] header = {CLA_TEST,typeINS, P1_EMPTY,P2_EMPTY};
+
+		byte[] optional = new byte[(byte)(2+challenge.length)];
+		optional[0] = (byte)challenge.length;
+		System.arraycopy(challenge, 0, optional, (byte)1, optional[0]);
+
+		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		System.arraycopy(header, (byte)0, command, (byte)0, (byte)header.length);
+		System.arraycopy(optional, (byte)0, command,(byte)header.length, (byte)optional.length);
+
+		CommandAPDU cmd = new CommandAPDU( command);
+	//	displayAPDU(cmd);
+
+		/*end Requete*/
+
+		/* Reception et retour du cipher */
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
+		byte[] bytes = resp.getBytes();
+		System.arraycopy(bytes, 0, result, 0, (byte)(bytes.length-2));
+		return result;		
     }
     
     
@@ -193,7 +214,7 @@ public class TheClient {
 	    sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
 	    byte[] response;
 	    byte[] unciphered; 
-	    long d1, d2, seed=0;
+	    long seed=0;
 	    java.util.Random r = new java.util.Random( seed );
 
 	    byte[] challengeDES = new byte[16]; 		// size%8==0, coz DES key 64bits

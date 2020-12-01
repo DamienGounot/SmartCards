@@ -1,4 +1,4 @@
-set PROJECT=studentcard
+set PROJECT=studentCard
 
 set DIR=..
 set OUT=%DIR%\out
