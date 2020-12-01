@@ -31,7 +31,7 @@ public class TheClient {
 	static final byte READNAMEFROMCARD			= (byte)0x02;
 	static final byte WRITENAMETOCARD			= (byte)0x01;
 
-	final static short MAXLENGTH = (short)126;
+	final static short MAXLENGTH = 200;
 	static final byte P1_FILENAME 	 	= (byte)0x01;
 	static final byte P1_BLOC 	 		= (byte)0x02;
 	static final byte P1_VAR 	 		= (byte)0x03;
@@ -297,12 +297,28 @@ public class TheClient {
 				/* envoi d'un bloc */
 				System.out.println("==========Requete: Bloc==========");
 				byte[] header1 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)(nbAPDUMax-1)}; // requete de type "bloc" (contient un bloc de 126 octets) avec P2 = indice du bloc
-				byte[] optional1 = new byte[(byte)1 + (byte)return_value];
-				byte[] command1 = new byte[(byte)header1.length + (byte)optional1.length];
-				optional1[0] = (byte)return_value;
+				
+				System.out.println("Memoire allouee pour optional: "+(return_value+1));
+
+				byte[] optional1 = new byte[(return_value+1)];
+
+				System.out.println("Memoire allouee pour command: "+(short)(((byte)header1.length + (byte)optional1.length)&(short)255));
+
+				byte[] command1 = new byte[(short)(((byte)header1.length + (byte)optional1.length)&(short)255)];
+
+				optional1[0] =  (byte)(return_value);
+
+				System.out.println("Lc: "+(byte)(return_value));
+
 				System.arraycopy(dataBlock, (byte)0, optional1, (byte)1, optional1[0]);
+
+				System.out.println("header1.length: "+(byte)header1.length);
 				System.arraycopy(header1,(byte)0,command1,(byte)0,(byte)header1.length);
+
+				System.out.println("optional1.length: "+(byte)optional1.length);
 				System.arraycopy(optional1,(byte)0,command1,(byte)header1.length,(byte)optional1.length);
+
+
 				CommandAPDU cmd1 = new CommandAPDU( command1);
 				ResponseAPDU resp1 = this.sendAPDU( cmd1, DISPLAY );
 				System.out.println("==========Fin Requete: Bloc==========");
@@ -591,6 +607,11 @@ public class TheClient {
 		System.out.println( "1: write a name to the card" );
 		System.out.println( "0: exit" );
 		System.out.print( "--> " );
+
+
+		// byte a = (byte)200;
+		// System.out.println("byte a (200): "+a);
+		// System.out.println("byte a (200): "+(short)(a&(short)255));
 	}
 
 
