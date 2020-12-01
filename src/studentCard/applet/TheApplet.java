@@ -207,23 +207,23 @@ public class TheApplet extends Applet {
 	}
 
 
-	void writeFileToCard( APDU apdu ) {
+	void writeFileToCard( APDU apdu ) {  // TO EDIT
 		byte[] buffer = apdu.getBuffer();  
 		apdu.setIncomingAndReceive();
 		
-		// switch(buffer[2]){
-		// 	case P1_FILENAME:
-		// 	Util.arrayCopy(buffer, (byte)4, file, (byte)0, (byte)(buffer[4]+(byte)1));
-		// 	break;
-		// 	case P1_BLOC:
-		// 	short offset = (short)(((byte)1 + file[0] + (byte)2) + (buffer[3] * (byte)MAXLENGTH));
-		// 	Util.arrayCopy(buffer, (byte)5, file, offset, buffer[4]);
-		// 	break;
-		// 	case P1_VAR:
-		// 	Util.arrayCopy(buffer, (byte)5, file, (byte)((byte)1 + file[0]),buffer[4]);
-		// 	break;
-		// 	default:
-		// }
+		switch(buffer[2]){
+			case P1_FILENAME:
+			Util.arrayCopy(buffer, (byte)4, file, (byte)0, (byte)(buffer[4]+(byte)1));
+			break;
+			case P1_BLOC:
+			short offset = (short)((((byte)1 + file[0] + (byte)2) + (buffer[3] * (byte)MAXLENGTH))&(short)255);
+			Util.arrayCopy(buffer, (byte)5, file, offset, (short)(buffer[4]&(short)255));
+			break;
+			case P1_VAR:
+			Util.arrayCopy(buffer, (byte)5, file, (byte)((byte)1 + file[0]),(short)(buffer[4]&(short)255));
+			break;
+			default:
+		}
 	}
 
 

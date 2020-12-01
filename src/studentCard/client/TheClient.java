@@ -611,10 +611,17 @@ public class TheClient {
 		System.out.println( "0: exit" );
 		System.out.print( "--> " );
 
+		/*ZONE DE TEST*/
 
 		// byte a = (byte)200;
 		// System.out.println("byte a (200): "+a);
 		// System.out.println("byte a (200): "+(short)(a&(short)255));
+
+		byte indice = 2;
+		short offset = (short)(((byte)1 + (byte)8 + (byte)2) + ((byte)indice * (byte)MAXLENGTH));
+		System.out.println("Offset de base: "+offset);
+		offset = (short)((((byte)1 + (byte)8 + (byte)2) + ((byte)indice * (byte)MAXLENGTH))&(short)255);
+		System.out.println("Offset new: "+offset);
 	}
 
 
