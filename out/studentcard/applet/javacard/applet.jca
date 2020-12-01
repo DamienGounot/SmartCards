@@ -1,5 +1,5 @@
 // converted by version 1.3
-// on Tue Dec 01 13:05:37 GMT+01:00 2020
+// on Tue Dec 01 14:45:01 GMT+01:00 2020
 
 .package applet {
 	.aid 0xA0:0x0:0x0:0x0:0x62:0x3:0x1:0xC:0x6;
@@ -581,8 +581,8 @@
 		}
 
 		.method  writeFileToCard(Ljavacard/framework/APDU;)V 133 {
-			.stack 6;
-			.locals 2;
+			.stack 1;
+			.locals 1;
 
 			.descriptor	Ljavacard/framework/APDU;	0.10;
 
@@ -592,63 +592,7 @@
 					aload_1;
 					invokevirtual 30;		// javacard/framework/APDU.setIncomingAndReceive()S
 					pop;
-					aload_2;
-					sconst_2;
-					baload;
-					stableswitch L4 1 3 L1 L2 L3;
-				L1:	aload_2;
-					sconst_4;
-					getstatic_a 31;		// reference applet/TheApplet.file
-					sconst_0;
-					aload_2;
-					sconst_4;
-					baload;
-					sconst_1;
-					sadd;
-					s2b;
-					invokestatic 32;		// javacard/framework/Util.arrayCopy([BS[BSS)S
-					pop;
-					goto L4;
-				L2:	sconst_1;
-					getstatic_a 31;		// reference applet/TheApplet.file
-					sconst_0;
-					baload;
-					sadd;
-					sconst_2;
-					sadd;
-					aload_2;
-					sconst_3;
-					baload;
-					bspush 126;
-					smul;
-					sadd;
-					sstore_3;
-					aload_2;
-					sconst_5;
-					getstatic_a 31;		// reference applet/TheApplet.file
-					sload_3;
-					aload_2;
-					sconst_4;
-					baload;
-					invokestatic 32;		// javacard/framework/Util.arrayCopy([BS[BSS)S
-					pop;
-					goto L4;
-				L3:	aload_2;
-					sconst_5;
-					getstatic_a 31;		// reference applet/TheApplet.file
-					sconst_1;
-					getstatic_a 31;		// reference applet/TheApplet.file
-					sconst_0;
-					baload;
-					sadd;
-					s2b;
-					aload_2;
-					sconst_4;
-					baload;
-					invokestatic 32;		// javacard/framework/Util.arrayCopy([BS[BSS)S
-					pop;
-					goto L4;
-				L4:	return;
+					return;
 		}
 
 		.method  updateWritePIN(Ljavacard/framework/APDU;)V 134 {
