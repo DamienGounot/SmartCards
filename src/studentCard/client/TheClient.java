@@ -285,34 +285,34 @@ public class TheClient {
 		int return_value = 0;
 
 		while( (return_value = filedata.read(dataBlock,0,MAXLENGTH)) !=-1 ) {
-				System.out.println("return :"+return_value);
+				//System.out.println("return :"+return_value);
 			if(return_value == MAXLENGTH){
 				nbAPDUMax ++;
 
-				System.out.println("Indice du bloc :"+(nbAPDUMax-1));
+				//System.out.println("Indice du bloc :"+(nbAPDUMax-1));
 
 				/* envoi d'un bloc */
 				System.out.println("==========Requete: Bloc==========");
 				byte[] header1 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)(nbAPDUMax-1)}; // requete de type "bloc" (contient un bloc de 126 octets) avec P2 = indice du bloc
 				
-				System.out.println("Memoire allouee pour optional: "+(return_value+1));
+				//System.out.println("Memoire allouee pour optional: "+(return_value+1));
 
 				byte[] optional1 = new byte[(return_value+1)];
 
-				System.out.println("Memoire allouee pour command: "+(header1.length + optional1.length));
+				//System.out.println("Memoire allouee pour command: "+(header1.length + optional1.length));
 
 				byte[] command1 = new byte[header1.length +optional1.length];
 
 				optional1[0] =  (byte)return_value;
 
-				System.out.println("Lc: "+return_value);
+				//System.out.println("Lc: "+return_value);
 
 				System.arraycopy(dataBlock, (byte)0, optional1, (byte)1, return_value);
 
-				System.out.println("header1.length: "+header1.length);
+				//System.out.println("header1.length: "+header1.length);
 				System.arraycopy(header1,(byte)0,command1,(byte)0,header1.length);
 
-				System.out.println("optional1.length: "+optional1.length);
+				//System.out.println("optional1.length: "+optional1.length);
 				System.arraycopy(optional1,(byte)0,command1,header1.length,optional1.length);
 
 
@@ -326,7 +326,7 @@ public class TheClient {
 
 				lastAPDUsize = return_value;
 
-				System.out.println("Indice du bloc :"+(nbAPDUMax));
+				//System.out.println("Indice du bloc :"+(nbAPDUMax));
 
 
 
@@ -611,17 +611,17 @@ public class TheClient {
 		System.out.println( "0: exit" );
 		System.out.print( "--> " );
 
-		/*ZONE DE TEST*/
-
-		// byte a = (byte)200;
-		// System.out.println("byte a (200): "+a);
-		// System.out.println("byte a (200): "+(short)(a&(short)255));
-
-		byte indice = 2;
-		short offset = (short)(((byte)1 + (byte)8 + (byte)2) + ((byte)indice * (byte)MAXLENGTH));
-		System.out.println("Offset de base: "+offset);
-		offset = (short)((((byte)1 + (byte)8 + (byte)2) + ((byte)indice * (byte)MAXLENGTH))&(short)255);
-		System.out.println("Offset new: "+offset);
+		System.out.println("[DEBUG]: constante maxlenght Java et Applet: "+(short)200);
+		System.out.println("[DEBUG]: maxlength envoye: "+(byte)200);
+		System.out.println("[DEBUG]: CARTE: maxlength corrige: "+(short)(((byte)200)&(short)255));
+		short offset = (short)((((byte)1 + (byte)11 + (byte)2) + (0 * (short)MAXLENGTH)));
+		System.out.println("[DEBUG]: CARTE: offset indice 0 corrige: "+offset);
+		offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)1 * (short)MAXLENGTH)));
+		System.out.println("[DEBUG]: CARTE: offset indice 1 corrige: "+offset);
+		offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)2 * (short)MAXLENGTH)));
+		System.out.println("[DEBUG]: CARTE: offset indice 2 corrige: "+offset);
+		offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)3 * (short)MAXLENGTH)));
+		System.out.println("[DEBUG]: CARTE: offset indice 3 corrige: "+offset);
 	}
 
 
