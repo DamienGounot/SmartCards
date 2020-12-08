@@ -40,7 +40,7 @@ public class TheApplet extends Applet {
 
 	boolean PINsecurity;
 	static byte[] file = new byte[8192]; // 1Ko
-	final static short MAXLENGTH = (short)200;
+	final static short MAXLENGTH = (short)255;
 	static final byte P1_FILENAME 	 	= (byte)0x01;
 	static final byte P1_BLOC 	 		= (byte)0x02;
 	static final byte P1_VAR 	 		= (byte)0x03;

@@ -31,7 +31,7 @@ public class TheClient {
 	static final byte READNAMEFROMCARD			= (byte)0x02;
 	static final byte WRITENAMETOCARD			= (byte)0x01;
 
-	final static short MAXLENGTH = 200;
+	final static short MAXLENGTH = 255;
 	static final byte P1_FILENAME 	 	= (byte)0x01;
 	static final byte P1_BLOC 	 		= (byte)0x02;
 	static final byte P1_VAR 	 		= (byte)0x03;
@@ -332,7 +332,7 @@ public class TheClient {
 
 
 				/* envoi du DERNIER bloc */
-				System.out.println("==========Requete: Last Bloc==========");
+				System.out.println("==========Requete: Bloc==========");
 				byte[] header2 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)nbAPDUMax}; // requete de type "bloc" (contient un bloc de lastAPDUsize octets) avec P2 = indice du bloc
 				
 				byte[] optional2 = new byte[(byte)1 + lastAPDUsize];
@@ -347,7 +347,7 @@ public class TheClient {
 
 				CommandAPDU cmd2 = new CommandAPDU( command2);
 				ResponseAPDU resp2 = this.sendAPDU( cmd2, DISPLAY );
-				System.out.println("==========Fin Requete: Last Bloc==========");
+				System.out.println("==========Fin Requete: Bloc==========");
 				/* end */
 
 				
@@ -611,17 +611,17 @@ public class TheClient {
 		System.out.println( "0: exit" );
 		System.out.print( "--> " );
 
-		System.out.println("[DEBUG]: constante maxlenght Java et Applet: "+(short)200);
-		System.out.println("[DEBUG]: maxlength envoye: "+(byte)200);
-		System.out.println("[DEBUG]: CARTE: maxlength corrige: "+(short)(((byte)200)&(short)255));
-		short offset = (short)((((byte)1 + (byte)11 + (byte)2) + (0 * (short)MAXLENGTH)));
-		System.out.println("[DEBUG]: CARTE: offset indice 0 corrige: "+offset);
-		offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)1 * (short)MAXLENGTH)));
-		System.out.println("[DEBUG]: CARTE: offset indice 1 corrige: "+offset);
-		offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)2 * (short)MAXLENGTH)));
-		System.out.println("[DEBUG]: CARTE: offset indice 2 corrige: "+offset);
-		offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)3 * (short)MAXLENGTH)));
-		System.out.println("[DEBUG]: CARTE: offset indice 3 corrige: "+offset);
+		// System.out.println("[DEBUG]: constante maxlenght Java et Applet: "+(short)200);
+		// System.out.println("[DEBUG]: maxlength envoye: "+(byte)200);
+		// System.out.println("[DEBUG]: CARTE: maxlength corrige: "+(short)(((byte)200)&(short)255));
+		// short offset = (short)((((byte)1 + (byte)11 + (byte)2) + (0 * (short)MAXLENGTH)));
+		// System.out.println("[DEBUG]: CARTE: offset indice 0 corrige: "+offset);
+		// offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)1 * (short)MAXLENGTH)));
+		// System.out.println("[DEBUG]: CARTE: offset indice 1 corrige: "+offset);
+		// offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)2 * (short)MAXLENGTH)));
+		// System.out.println("[DEBUG]: CARTE: offset indice 2 corrige: "+offset);
+		// offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)3 * (short)MAXLENGTH)));
+		// System.out.println("[DEBUG]: CARTE: offset indice 3 corrige: "+offset);
 	}
 
 
