@@ -40,7 +40,7 @@ public class TheApplet extends Applet {
 
 	boolean PINsecurity;
 	static byte[] file = new byte[8192]; // 1Ko
-	final static short MAXLENGTH = (short)126;
+	final static short MAXLENGTH = (short)255;
 	static final byte P1_FILENAME 	 	= (byte)0x01;
 	static final byte P1_BLOC 	 		= (byte)0x02;
 	static final byte P1_VAR 	 		= (byte)0x03;
@@ -178,10 +178,10 @@ public class TheApplet extends Applet {
 			case P1_BLOC:
 
 					/* envoi d'un bloc */
-					short offset = (short)((((byte)1 + (byte)file[0]) + (byte)2) + ((byte)(buffer[3]) * (byte)MAXLENGTH));
+					short offset = (short)((((byte)1 + file[0] + (byte)2) + (buffer[3] * (short)MAXLENGTH)));
 					buffer = apdu.getBuffer();
-					Util.arrayCopy(file, offset, buffer, (byte)0, (byte)MAXLENGTH);
-					apdu.setOutgoingAndSend((short)0, (byte)MAXLENGTH);
+					Util.arrayCopy(file, offset, buffer, (byte)0, (short)MAXLENGTH);
+					apdu.setOutgoingAndSend((short)0, (short)MAXLENGTH);
 					/* end */
 			break;
 			case P1_LASTBLOCK:
@@ -190,10 +190,12 @@ public class TheApplet extends Applet {
 					/* envoi du dernier bloc */
 					byte nbAPDUMax = file[(byte)(file[0]+(byte)1)];
 					byte lastAPDUsize = file[(byte)(file[0]+(byte)2)];
-					short offset_last = (short)((((byte)1 + (byte)file[0]) + (byte)2) + ((byte)(nbAPDUMax) * (byte)MAXLENGTH));
+
+					short offset_last = (short)((((byte)1 + (byte)file[0]) + (byte)2) + ((byte)(nbAPDUMax) * (short)MAXLENGTH));
+					
 					buffer = apdu.getBuffer();
-					Util.arrayCopy(file, offset_last, buffer, (byte)0, (byte)lastAPDUsize);
-					apdu.setOutgoingAndSend((short)0, (byte)lastAPDUsize);
+					Util.arrayCopy(file, offset_last, buffer, (byte)0, (short)(lastAPDUsize&(short)255));
+					apdu.setOutgoingAndSend((short)0, (short)(lastAPDUsize&(short)255));
 					/* end */			
 			break;
 			case P1_VAR:
@@ -207,7 +209,7 @@ public class TheApplet extends Applet {
 	}
 
 
-	void writeFileToCard( APDU apdu ) {
+	void writeFileToCard( APDU apdu ) {  // TO EDIT
 		byte[] buffer = apdu.getBuffer();  
 		apdu.setIncomingAndReceive();
 		
@@ -216,11 +218,12 @@ public class TheApplet extends Applet {
 			Util.arrayCopy(buffer, (byte)4, file, (byte)0, (byte)(buffer[4]+(byte)1));
 			break;
 			case P1_BLOC:
-			short offset = (short)(((byte)1 + file[0] + (byte)2) + (buffer[3] * (byte)MAXLENGTH));
-			Util.arrayCopy(buffer, (byte)5, file, offset, buffer[4]);
+			short offset = (short)((((byte)1 + file[0] + (byte)2) + (buffer[3] * (short)MAXLENGTH)));
+
+			Util.arrayCopy(buffer, (byte)5, file, offset, (short)(buffer[4]&(short)255));
 			break;
 			case P1_VAR:
-			Util.arrayCopy(buffer, (byte)5, file, (byte)((byte)1 + file[0]),buffer[4]);
+			Util.arrayCopy(buffer, (byte)5, file, (byte)((byte)1 + file[0]),(short)(buffer[4]&(short)255));
 			break;
 			default:
 		}

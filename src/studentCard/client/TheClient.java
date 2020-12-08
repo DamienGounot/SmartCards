@@ -31,7 +31,7 @@ public class TheClient {
 	static final byte READNAMEFROMCARD			= (byte)0x02;
 	static final byte WRITENAMETOCARD			= (byte)0x01;
 
-	final static short MAXLENGTH = (short)126;
+	final static short MAXLENGTH = 255;
 	static final byte P1_FILENAME 	 	= (byte)0x01;
 	static final byte P1_BLOC 	 		= (byte)0x02;
 	static final byte P1_VAR 	 		= (byte)0x03;
@@ -268,11 +268,11 @@ public class TheClient {
 		System.out.println("==========Requete: Filename==========");
 		byte[] header = {CLA,WRITEFILETOCARD, P1_FILENAME,P2}; // requete de type "filename" ( contient la taille de filename et filename)
 		byte[] optional = new byte[(byte)1 + filenameSize];
-		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		byte[] command = new byte[header.length + optional.length];
 		optional[0] = filenameSize;
-		System.arraycopy(filename.getBytes(), (byte)0, optional, (byte)1, optional[0]);
-		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
-		System.arraycopy(optional,(byte)0,command,(byte)header.length,(byte)optional.length);
+		System.arraycopy(filename.getBytes(), (byte)0, optional, (byte)1, filenameSize);
+		System.arraycopy(header,(byte)0,command,(byte)0,header.length);
+		System.arraycopy(optional,(byte)0,command,header.length,optional.length);
 		CommandAPDU cmd = new CommandAPDU( command);
 		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
 		System.out.println("==========Fin Requete: Filename==========");
@@ -285,24 +285,37 @@ public class TheClient {
 		int return_value = 0;
 
 		while( (return_value = filedata.read(dataBlock,0,MAXLENGTH)) !=-1 ) {
-				System.out.println("return :"+return_value);
+				//System.out.println("return :"+return_value);
 			if(return_value == MAXLENGTH){
 				nbAPDUMax ++;
 
-				System.out.println("Indice du bloc :"+(nbAPDUMax-1));
-				short offset = (short)(((byte)1 + (byte)filename.getBytes().length + (byte)2) + ((byte)(nbAPDUMax-1) * (byte)MAXLENGTH));
-				System.out.println("offset value: "+offset);
-
+				//System.out.println("Indice du bloc :"+(nbAPDUMax-1));
 
 				/* envoi d'un bloc */
 				System.out.println("==========Requete: Bloc==========");
 				byte[] header1 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)(nbAPDUMax-1)}; // requete de type "bloc" (contient un bloc de 126 octets) avec P2 = indice du bloc
-				byte[] optional1 = new byte[(byte)1 + (byte)return_value];
-				byte[] command1 = new byte[(byte)header1.length + (byte)optional1.length];
-				optional1[0] = (byte)return_value;
-				System.arraycopy(dataBlock, (byte)0, optional1, (byte)1, optional1[0]);
-				System.arraycopy(header1,(byte)0,command1,(byte)0,(byte)header1.length);
-				System.arraycopy(optional1,(byte)0,command1,(byte)header1.length,(byte)optional1.length);
+				
+				//System.out.println("Memoire allouee pour optional: "+(return_value+1));
+
+				byte[] optional1 = new byte[(return_value+1)];
+
+				//System.out.println("Memoire allouee pour command: "+(header1.length + optional1.length));
+
+				byte[] command1 = new byte[header1.length +optional1.length];
+
+				optional1[0] =  (byte)return_value;
+
+				//System.out.println("Lc: "+return_value);
+
+				System.arraycopy(dataBlock, (byte)0, optional1, (byte)1, return_value);
+
+				//System.out.println("header1.length: "+header1.length);
+				System.arraycopy(header1,(byte)0,command1,(byte)0,header1.length);
+
+				//System.out.println("optional1.length: "+optional1.length);
+				System.arraycopy(optional1,(byte)0,command1,header1.length,optional1.length);
+
+
 				CommandAPDU cmd1 = new CommandAPDU( command1);
 				ResponseAPDU resp1 = this.sendAPDU( cmd1, DISPLAY );
 				System.out.println("==========Fin Requete: Bloc==========");
@@ -313,24 +326,28 @@ public class TheClient {
 
 				lastAPDUsize = return_value;
 
-				System.out.println("Indice du bloc :"+(nbAPDUMax));
-				short offset = (short)(((byte)1 + (byte)8 + (byte)2) + ((byte)(nbAPDUMax) * (byte)MAXLENGTH));
-				System.out.println("offset value: "+offset);
+				//System.out.println("Indice du bloc :"+(nbAPDUMax));
+
 
 
 
 				/* envoi du DERNIER bloc */
-				System.out.println("==========Requete: Last Bloc==========");
+				System.out.println("==========Requete: Bloc==========");
 				byte[] header2 = {CLA,WRITEFILETOCARD,P1_BLOC,(byte)nbAPDUMax}; // requete de type "bloc" (contient un bloc de lastAPDUsize octets) avec P2 = indice du bloc
-				byte[] optional2 = new byte[(byte)1 + (byte)lastAPDUsize];
-				byte[] command2 = new byte[(byte)header2.length + (byte)optional2.length];
+				
+				byte[] optional2 = new byte[(byte)1 + lastAPDUsize];
+
+				byte[] command2 = new byte[header2.length + optional2.length];
+
 				optional2[0] = (byte)lastAPDUsize;
-				System.arraycopy(dataBlock, (byte)0, optional2, (byte)1, optional2[0]);
-				System.arraycopy(header2,(byte)0,command2,(byte)0,(byte)header2.length);
-				System.arraycopy(optional2,(byte)0,command2,(byte)header2.length,(byte)optional2.length);
+
+				System.arraycopy(dataBlock, (byte)0, optional2, (byte)1, lastAPDUsize);
+				System.arraycopy(header2,(byte)0,command2,(byte)0,header2.length);
+				System.arraycopy(optional2,(byte)0,command2,header2.length,optional2.length);
+
 				CommandAPDU cmd2 = new CommandAPDU( command2);
 				ResponseAPDU resp2 = this.sendAPDU( cmd2, DISPLAY );
-				System.out.println("==========Fin Requete: Last Bloc==========");
+				System.out.println("==========Fin Requete: Bloc==========");
 				/* end */
 
 				
@@ -341,9 +358,11 @@ public class TheClient {
 				System.out.println("==========Requete: Valeurs Variables==========");
 				byte[] header3 = {CLA,WRITEFILETOCARD,P1_VAR,P2}; // requete de type "var" (contient nbAPDUMax et lastAPDUsize)
 				byte[] optional3 = {(byte)0x02,(byte)nbAPDUMax,(byte)lastAPDUsize};
-				byte[] command3 = new byte[(byte)header3.length + (byte)optional3.length];
-				System.arraycopy(header3,(byte)0,command3,(byte)0,(byte)header3.length);
-				System.arraycopy(optional3,(byte)0,command3,(byte)header3.length,(byte)optional3.length);
+
+				byte[] command3 = new byte[header3.length +optional3.length];
+				System.arraycopy(header3,(byte)0,command3,(byte)0,header3.length);
+				System.arraycopy(optional3,(byte)0,command3,header3.length,optional3.length);
+
 				CommandAPDU cmd3 = new CommandAPDU( command3);
 				ResponseAPDU resp3 = this.sendAPDU( cmd3, DISPLAY );
 				/* end */
@@ -591,6 +610,18 @@ public class TheClient {
 		System.out.println( "1: write a name to the card" );
 		System.out.println( "0: exit" );
 		System.out.print( "--> " );
+
+		// System.out.println("[DEBUG]: constante maxlenght Java et Applet: "+(short)200);
+		// System.out.println("[DEBUG]: maxlength envoye: "+(byte)200);
+		// System.out.println("[DEBUG]: CARTE: maxlength corrige: "+(short)(((byte)200)&(short)255));
+		// short offset = (short)((((byte)1 + (byte)11 + (byte)2) + (0 * (short)MAXLENGTH)));
+		// System.out.println("[DEBUG]: CARTE: offset indice 0 corrige: "+offset);
+		// offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)1 * (short)MAXLENGTH)));
+		// System.out.println("[DEBUG]: CARTE: offset indice 1 corrige: "+offset);
+		// offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)2 * (short)MAXLENGTH)));
+		// System.out.println("[DEBUG]: CARTE: offset indice 2 corrige: "+offset);
+		// offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)3 * (short)MAXLENGTH)));
+		// System.out.println("[DEBUG]: CARTE: offset indice 3 corrige: "+offset);
 	}
 
 
