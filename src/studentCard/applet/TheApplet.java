@@ -149,15 +149,15 @@ public class TheApplet extends Applet {
 			case UPDATECARDKEY: updateCardKey( apdu ); break;
 			case UNCIPHERFILEBYCARD: uncipherFileByCard( apdu ); break;
 			case CIPHERFILEBYCARD: cipherFileByCard( apdu ); break;
-			//case CIPHERANDUNCIPHERNAMEBYCARD: cipherAndUncipherNameByCard( apdu ); break;
-			case (byte)CIPHERANDUNCIPHERNAMEBYCARD:
-			switch(buffer[2]){
-				case INS_DES_ECB_NOPAD_ENC: if( DES_ECB_NOPAD )
-				cipherGeneric( apdu, cDES_ECB_NOPAD_enc); return;
-				case INS_DES_ECB_NOPAD_DEC: if( DES_ECB_NOPAD ) 
-				cipherGeneric( apdu, cDES_ECB_NOPAD_dec); return;
-			}
-			break;
+			case CIPHERANDUNCIPHERNAMEBYCARD: cipherAndUncipherNameByCard( apdu ); break;
+			// case CIPHERANDUNCIPHERNAMEBYCARD:
+			// switch(buffer[2]){
+			// 	case INS_DES_ECB_NOPAD_ENC: if( DES_ECB_NOPAD )
+			// 	cipherGeneric( apdu, cDES_ECB_NOPAD_enc); return;
+			// 	case INS_DES_ECB_NOPAD_DEC: if( DES_ECB_NOPAD ) 
+			// 	cipherGeneric( apdu, cDES_ECB_NOPAD_dec); return;
+			// }
+			// break;
 			case READFILEFROMCARD: readFileFromCard( apdu ); break;
 			case WRITEFILETOCARD: writeFileToCard( apdu ); break;
 			case UPDATEWRITEPIN:
@@ -231,27 +231,19 @@ public class TheApplet extends Applet {
 
 	void cipherAndUncipherNameByCard( APDU apdu ) {
 
-
 		byte[] buffer = apdu.getBuffer();  
-		apdu.setIncomingAndReceive();
 		
-		switch(buffer[2]){
-			case INS_DES_ECB_NOPAD_ENC:
-			if( DES_ECB_NOPAD )
-			{
+	switch(buffer[2]){
+				case INS_DES_ECB_NOPAD_ENC: 
+				if( DES_ECB_NOPAD )
 				cipherGeneric( apdu, cDES_ECB_NOPAD_enc);
-			//	ISOException.throwIt((short)0x00);
+				break;
+				case INS_DES_ECB_NOPAD_DEC: 
+				if( DES_ECB_NOPAD ) 
+				cipherGeneric( apdu, cDES_ECB_NOPAD_dec); 
+				break;
+				default:
 			}
-			break;
-			case INS_DES_ECB_NOPAD_DEC:
-			if( DES_ECB_NOPAD )
-			{
-				ISOException.throwIt((short)0x99);
-			//	cipherGeneric( apdu, cDES_ECB_NOPAD_dec);
-			}
-			break;
-			default:
-		}
 	}
 
 
