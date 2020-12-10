@@ -79,7 +79,6 @@ public class TheApplet extends Applet {
 		pinWrite = new OwnerPIN((byte)3,(byte)8);  				// 3 tries 8=Max Size
 		pinWrite.update(_pinWrite_,(short)0,(byte)4); 				// from pincode, offset 0, length 4
 		PINsecurity = true;	// init PINsecurity to true
-
 	    initKeyDES(); 
 	    initDES_ECB_NOPAD(); 
 		
@@ -111,6 +110,7 @@ public class TheApplet extends Applet {
 
 	private void cipherGeneric( APDU apdu, Cipher cipher) {
         byte[] buffer = apdu.getBuffer();
+        
         /*Reception de la commande Client*/
         apdu.setIncomingAndReceive();
         byte Lc = buffer[4];
@@ -118,6 +118,7 @@ public class TheApplet extends Applet {
         cipher.doFinal( buffer, (short)5, Lc, buffer, (short)0);
         /*Renvoi cipher vers Client*/
         apdu.setOutgoingAndSend((short)0, Lc);
+
 	}
 
 
@@ -148,7 +149,15 @@ public class TheApplet extends Applet {
 			case UPDATECARDKEY: updateCardKey( apdu ); break;
 			case UNCIPHERFILEBYCARD: uncipherFileByCard( apdu ); break;
 			case CIPHERFILEBYCARD: cipherFileByCard( apdu ); break;
-			case CIPHERANDUNCIPHERNAMEBYCARD: cipherAndUncipherNameByCard( apdu ); break;
+			//case CIPHERANDUNCIPHERNAMEBYCARD: cipherAndUncipherNameByCard( apdu ); break;
+			case (byte)CIPHERANDUNCIPHERNAMEBYCARD:
+			switch(buffer[2]){
+				case INS_DES_ECB_NOPAD_ENC: if( DES_ECB_NOPAD )
+				cipherGeneric( apdu, cDES_ECB_NOPAD_enc); return;
+				case INS_DES_ECB_NOPAD_DEC: if( DES_ECB_NOPAD ) 
+				cipherGeneric( apdu, cDES_ECB_NOPAD_dec); return;
+			}
+			break;
 			case READFILEFROMCARD: readFileFromCard( apdu ); break;
 			case WRITEFILETOCARD: writeFileToCard( apdu ); break;
 			case UPDATEWRITEPIN:

@@ -190,6 +190,10 @@ public class TheClient {
 	    byte[] challengeDES = new byte[16]; 		// size%8==0, coz DES key 64bits
 
 	    r.nextBytes( challengeDES );
+
+	    // System.out.println( "**TESTING**");
+	    // testDES_ECB_NOPAD( true );
+	    // System.out.println( "**TESTING**");
 	   
 	    System.out.println("\nchallenge:\n" + encoder.encode(challengeDES) + "\n");
 	    response = cipherGeneric(INS_DES_ECB_NOPAD_ENC, challengeDES);
@@ -645,7 +649,7 @@ public class TheClient {
 
 		/* Forgage de la requete pour cippher/uncipher*/
 
-		byte[] header = {CLA,CIPHERANDUNCIPHERNAMEBYCARD, typeINS,0x00};
+		byte[] header = {CLA,CIPHERANDUNCIPHERNAMEBYCARD, typeINS,(byte)0x00};
 
 		byte[] optional = new byte[(byte)(2+challenge.length)];
 		optional[0] = (byte)challenge.length;
@@ -656,7 +660,7 @@ public class TheClient {
 		System.arraycopy(optional, (byte)0, command,(byte)header.length, (byte)optional.length);
 
 		CommandAPDU cmd = new CommandAPDU( command);
-		//	displayAPDU(cmd);
+	//	displayAPDU(cmd);
 
 		/*end Requete*/
 
@@ -666,6 +670,7 @@ public class TheClient {
 		System.arraycopy(bytes, 0, result, 0, (byte)(bytes.length-2));
 		return result;		
 	}
+	
 
 	void mainLoop() {
 		while( loop ) {
