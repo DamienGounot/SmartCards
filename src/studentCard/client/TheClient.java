@@ -195,10 +195,10 @@ public class TheClient {
 	    String msg = "";
 	    for(int i=0; i<finalData.length;i++)
 		    msg += new StringBuffer("").append((char)finalData[i]);
-	    System.out.print(msg);
+	    System.out.println(msg);
 
 
-	    sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
+	    //sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
 	    
 		byte[] response;
 	    byte[] unciphered; 
@@ -214,10 +214,39 @@ public class TheClient {
 	    // System.out.println( "**TESTING**");
 	   
 			//  System.out.println("\nchallenge:\n" + encoder.encode(finalData) + "\n");
-			//  response = cipherGeneric(INS_DES_ECB_NOPAD_ENC, finalData);
+			  response = cipherGeneric(INS_DES_ECB_NOPAD_ENC, finalData);
 			//  System.out.println("\nciphered is:\n" + encoder.encode(response) + "\n");
-			//  unciphered = cipherGeneric(INS_DES_ECB_NOPAD_DEC, response);
+
+
+		System.out.print("Cipher: ");
+	    msg = "";
+	    for(int i=0; i<response.length;i++)
+		    msg += new StringBuffer("").append((char)response[i]);
+	    System.out.println(msg);
+
+
+			  unciphered = cipherGeneric(INS_DES_ECB_NOPAD_DEC, response);
 			//  System.out.print("\nunciphered is:\n" + encoder.encode(unciphered) + "\n");
+
+				System.out.print("Contenu receptionne: ");
+				msg = "";
+				for(int i=0; i<unciphered.length;i++)
+					msg += new StringBuffer("").append((char)unciphered[i]);
+				System.out.println(msg);
+
+
+
+			int padding_reception = unciphered[unciphered.length-1];
+			padding_reception = padding_reception -48; //(-48 pour offset dans la table ASCII)
+		 	byte[] uncipheredFinal = new byte[unciphered.length-padding_reception];
+		 	System.arraycopy(unciphered, (byte)0, uncipheredFinal, (byte)0, (byte)(unciphered.length-padding_reception));
+
+
+		System.out.print("Uncipher: ");
+	    msg = "";
+	    for(int i=0; i<uncipheredFinal.length;i++)
+		    msg += new StringBuffer("").append((char)uncipheredFinal[i]);
+	    System.out.println(msg);
 
 
 	}
