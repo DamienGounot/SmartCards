@@ -1,5 +1,6 @@
 package client;
 
+import java.util.Date;
 import java.io.*;
 import opencard.core.service.*;
 import opencard.core.terminal.*;
@@ -13,7 +14,7 @@ public class TheClient {
 	boolean DISPLAY = true;
 	boolean loop = true;
 
-	static final byte CLA					= (byte)0x00;
+	static final byte CLA					= (byte)0x90;
 	static final byte P1					= (byte)0x00;
 	static final byte P2					= (byte)0x00;
 	static final byte UPDATECARDKEY				= (byte)0x14;
@@ -37,6 +38,11 @@ public class TheClient {
 	static final byte P1_VAR 	 		= (byte)0x03;
 	static final byte P1_LASTBLOCK 	 		= (byte)0x04;
 	static 	byte[] dataBlock = new byte[MAXLENGTH];
+
+
+    private final static byte INS_DES_ECB_NOPAD_ENC           	= (byte)0x20;
+    private final static byte INS_DES_ECB_NOPAD_DEC           	= (byte)0x21;
+
 	public TheClient() {
 		try {
 			SmartCard.start();
@@ -171,6 +177,78 @@ public class TheClient {
 
 
 	void cipherAndUncipherNameByCard() {
+		System.out.println("Saisissez le nom a chiffrer / dechiffrer via la carte:");
+		String name = readKeyboard();
+		int dataSize = name.getBytes().length;
+		int paddingSize = (8-(dataSize%8));
+
+		byte[] finalData = new byte[dataSize+paddingSize];
+		byte[] finalPadding = new byte[paddingSize];
+
+		for(int i =0; i < paddingSize ; i++){
+			finalPadding[i]= (byte)(paddingSize+48); //(+48 pour offset dans la table ASCII)
+		}
+		System.arraycopy(name.getBytes(), (byte)0, finalData, (byte)0, (byte)dataSize);
+		System.arraycopy(finalPadding, (byte)0, finalData, (byte)dataSize, (byte)paddingSize);
+
+		System.out.print("Contenu a envoyer: ");
+	    String msg = "";
+	    for(int i=0; i<finalData.length;i++)
+		    msg += new StringBuffer("").append((char)finalData[i]);
+	    System.out.println(msg);
+
+
+	    //sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
+	    
+		byte[] response;
+	    byte[] unciphered; 
+	    //long seed=0;
+	    //java.util.Random r = new java.util.Random( seed );
+
+	    //byte[] challengeDES = new byte[16]; 		// size%8==0, coz DES key 64bits
+
+	   // r.nextBytes( challengeDES );
+
+	    // System.out.println( "**TESTING**");
+	    // testDES_ECB_NOPAD( true );
+	    // System.out.println( "**TESTING**");
+	   
+			//  System.out.println("\nchallenge:\n" + encoder.encode(finalData) + "\n");
+			  response = cipherGeneric(INS_DES_ECB_NOPAD_ENC, finalData);
+			//  System.out.println("\nciphered is:\n" + encoder.encode(response) + "\n");
+
+
+		System.out.print("Cipher: ");
+	    msg = "";
+	    for(int i=0; i<response.length;i++)
+		    msg += new StringBuffer("").append((char)response[i]);
+	    System.out.println(msg);
+
+
+			  unciphered = cipherGeneric(INS_DES_ECB_NOPAD_DEC, response);
+			//  System.out.print("\nunciphered is:\n" + encoder.encode(unciphered) + "\n");
+
+				System.out.print("Contenu receptionne: ");
+				msg = "";
+				for(int i=0; i<unciphered.length;i++)
+					msg += new StringBuffer("").append((char)unciphered[i]);
+				System.out.println(msg);
+
+
+
+			int padding_reception = unciphered[unciphered.length-1];
+			padding_reception = padding_reception -48; //(-48 pour offset dans la table ASCII)
+		 	byte[] uncipheredFinal = new byte[unciphered.length-padding_reception];
+		 	System.arraycopy(unciphered, (byte)0, uncipheredFinal, (byte)0, (byte)(unciphered.length-padding_reception));
+
+
+		System.out.print("Uncipher: ");
+	    msg = "";
+	    for(int i=0; i<uncipheredFinal.length;i++)
+		    msg += new StringBuffer("").append((char)uncipheredFinal[i]);
+	    System.out.println(msg);
+
+
 	}
 
 
@@ -610,20 +688,38 @@ public class TheClient {
 		System.out.println( "1: write a name to the card" );
 		System.out.println( "0: exit" );
 		System.out.print( "--> " );
-
-		// System.out.println("[DEBUG]: constante maxlenght Java et Applet: "+(short)200);
-		// System.out.println("[DEBUG]: maxlength envoye: "+(byte)200);
-		// System.out.println("[DEBUG]: CARTE: maxlength corrige: "+(short)(((byte)200)&(short)255));
-		// short offset = (short)((((byte)1 + (byte)11 + (byte)2) + (0 * (short)MAXLENGTH)));
-		// System.out.println("[DEBUG]: CARTE: offset indice 0 corrige: "+offset);
-		// offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)1 * (short)MAXLENGTH)));
-		// System.out.println("[DEBUG]: CARTE: offset indice 1 corrige: "+offset);
-		// offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)2 * (short)MAXLENGTH)));
-		// System.out.println("[DEBUG]: CARTE: offset indice 2 corrige: "+offset);
-		// offset = (short)((((byte)1 + (byte)11 + (byte)2) + ((byte)3 * (short)MAXLENGTH)));
-		// System.out.println("[DEBUG]: CARTE: offset indice 3 corrige: "+offset);
 	}
 
+
+
+
+    private byte[] cipherGeneric( byte typeINS, byte[] challenge ) {
+		byte[] result = new byte[challenge.length];
+
+		/* Forgage de la requete pour cippher/uncipher*/
+
+		byte[] header = {CLA,CIPHERANDUNCIPHERNAMEBYCARD, typeINS,(byte)0x00};
+
+		byte[] optional = new byte[(byte)(2+challenge.length)];
+		optional[0] = (byte)challenge.length;
+		System.arraycopy(challenge, 0, optional, (byte)1, optional[0]);
+
+		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		System.arraycopy(header, (byte)0, command, (byte)0, (byte)header.length);
+		System.arraycopy(optional, (byte)0, command,(byte)header.length, (byte)optional.length);
+
+		CommandAPDU cmd = new CommandAPDU( command);
+	//	displayAPDU(cmd);
+
+		/*end Requete*/
+
+		/* Reception et retour du cipher */
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
+		byte[] bytes = resp.getBytes();
+		System.arraycopy(bytes, 0, result, 0, (byte)(bytes.length-2));
+		return result;		
+	}
+	
 
 	void mainLoop() {
 		while( loop ) {

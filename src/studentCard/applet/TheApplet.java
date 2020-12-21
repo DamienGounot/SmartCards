@@ -2,7 +2,8 @@ package applet;
 
 
 import javacard.framework.*;
-
+import javacard.security.*;
+import javacardx.crypto.*;
 
 
 
@@ -45,6 +46,29 @@ public class TheApplet extends Applet {
 	static final byte P1_BLOC 	 		= (byte)0x02;
 	static final byte P1_VAR 	 		= (byte)0x03;
 	static final byte P1_LASTBLOCK 	 		= (byte)0x04;
+	
+
+
+
+
+	private final static byte INS_DES_ECB_NOPAD_ENC           	= (byte)0x20;
+    private final static byte INS_DES_ECB_NOPAD_DEC           	= (byte)0x21;
+
+	static final byte[] theDESKey = 
+		new byte[] { (byte)0xCA, (byte)0xCA, (byte)0xCA, (byte)0xCA, (byte)0xCA, (byte)0xCA, (byte)0xCA, (byte)0xCA };
+    // cipher instances
+    private Cipher 
+	    cDES_ECB_NOPAD_enc, cDES_ECB_NOPAD_dec;
+    // key objects
+    private Key 
+	    secretDESKey, secretDES2Key, secretDES3Key;
+    boolean 
+	    pseudoRandom, secureRandom,
+	    SHA1, MD5, RIPEMD160,
+	    keyDES, DES_ECB_NOPAD, DES_CBC_NOPAD;
+
+
+
 
 	protected TheApplet() {
 
@@ -55,7 +79,46 @@ public class TheApplet extends Applet {
 		pinWrite = new OwnerPIN((byte)3,(byte)8);  				// 3 tries 8=Max Size
 		pinWrite.update(_pinWrite_,(short)0,(byte)4); 				// from pincode, offset 0, length 4
 		PINsecurity = true;	// init PINsecurity to true
+	    initKeyDES(); 
+	    initDES_ECB_NOPAD(); 
+		
 		this.register();
+	}
+
+    private void initKeyDES() {
+	    try {
+		    secretDESKey = KeyBuilder.buildKey(KeyBuilder.TYPE_DES, KeyBuilder.LENGTH_DES, false);
+		    ((DESKey)secretDESKey).setKey(theDESKey,(short)0);
+		    keyDES = true;
+	    } catch( Exception e ) {
+		    keyDES = false;
+	    }
+    }
+
+
+    private void initDES_ECB_NOPAD() {
+	    if( keyDES ) try {
+		    cDES_ECB_NOPAD_enc = Cipher.getInstance(Cipher.ALG_DES_ECB_NOPAD, false);
+		    cDES_ECB_NOPAD_dec = Cipher.getInstance(Cipher.ALG_DES_ECB_NOPAD, false);
+		    cDES_ECB_NOPAD_enc.init( secretDESKey, Cipher.MODE_ENCRYPT );
+		    cDES_ECB_NOPAD_dec.init( secretDESKey, Cipher.MODE_DECRYPT );
+		    DES_ECB_NOPAD = true;
+	    } catch( Exception e ) {
+		    DES_ECB_NOPAD = false;
+	    }
+    }
+
+	private void cipherGeneric( APDU apdu, Cipher cipher) {
+        byte[] buffer = apdu.getBuffer();
+        
+        /*Reception de la commande Client*/
+        apdu.setIncomingAndReceive();
+        byte Lc = buffer[4];
+        /*Cipher*/
+        cipher.doFinal( buffer, (short)5, Lc, buffer, (short)0);
+        /*Renvoi cipher vers Client*/
+        apdu.setOutgoingAndSend((short)0, Lc);
+
 	}
 
 
@@ -87,6 +150,14 @@ public class TheApplet extends Applet {
 			case UNCIPHERFILEBYCARD: uncipherFileByCard( apdu ); break;
 			case CIPHERFILEBYCARD: cipherFileByCard( apdu ); break;
 			case CIPHERANDUNCIPHERNAMEBYCARD: cipherAndUncipherNameByCard( apdu ); break;
+			// case CIPHERANDUNCIPHERNAMEBYCARD:
+			// switch(buffer[2]){
+			// 	case INS_DES_ECB_NOPAD_ENC: if( DES_ECB_NOPAD )
+			// 	cipherGeneric( apdu, cDES_ECB_NOPAD_enc); return;
+			// 	case INS_DES_ECB_NOPAD_DEC: if( DES_ECB_NOPAD ) 
+			// 	cipherGeneric( apdu, cDES_ECB_NOPAD_dec); return;
+			// }
+			// break;
 			case READFILEFROMCARD: readFileFromCard( apdu ); break;
 			case WRITEFILETOCARD: writeFileToCard( apdu ); break;
 			case UPDATEWRITEPIN:
@@ -159,6 +230,20 @@ public class TheApplet extends Applet {
 
 
 	void cipherAndUncipherNameByCard( APDU apdu ) {
+
+		byte[] buffer = apdu.getBuffer();  
+		
+	switch(buffer[2]){
+				case INS_DES_ECB_NOPAD_ENC: 
+				if( DES_ECB_NOPAD )
+				cipherGeneric( apdu, cDES_ECB_NOPAD_enc);
+				break;
+				case INS_DES_ECB_NOPAD_DEC: 
+				if( DES_ECB_NOPAD ) 
+				cipherGeneric( apdu, cDES_ECB_NOPAD_dec); 
+				break;
+				default:
+			}
 	}
 
 
@@ -209,7 +294,7 @@ public class TheApplet extends Applet {
 	}
 
 
-	void writeFileToCard( APDU apdu ) {  // TO EDIT
+	void writeFileToCard( APDU apdu ) {
 		byte[] buffer = apdu.getBuffer();  
 		apdu.setIncomingAndReceive();
 		
