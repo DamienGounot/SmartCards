@@ -115,9 +115,9 @@ public class TheApplet extends Applet {
         apdu.setIncomingAndReceive();
         byte Lc = buffer[4];
         /*Cipher*/
-        cipher.doFinal( buffer, (short)5, Lc, buffer, (short)0);
+        cipher.doFinal( buffer, (short)5, (short)((short)Lc&(short)255), buffer, (short)0);
         /*Renvoi cipher vers Client*/
-        apdu.setOutgoingAndSend((short)0, Lc);
+        apdu.setOutgoingAndSend((short)0, (short)((short)Lc&(short)255));
 
 	}
 
@@ -226,6 +226,8 @@ public class TheApplet extends Applet {
 
 
 	void cipherFileByCard( APDU apdu ) {
+
+		
 	}
 
 
