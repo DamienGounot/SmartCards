@@ -1,10 +1,2 @@
 
-out/studentcard/applet.cap
-
-out/studentcard/applet/javacard/applet.cap
-
-out/studentcard/applet/javacard/applet.exp
-
-out/studentcard/applet/javacard/applet.jca
-
-out/studentcard/script.scr
+out/*

@@ -178,8 +178,9 @@ public class TheClient {
 		System.arraycopy(DESKey.getBytes(), (byte)0, data, (byte)0, (byte)dataSize);
 
 		byte[] header = {CLA,UPDATECARDKEY, P1,P2}; 
-		byte[] optional = new byte[(byte)(dataSize+1)];
+		byte[] optional = new byte[(byte)(dataSize+2)];
 		optional[0] = (byte)dataSize;
+		optional[dataSize+1] = 0x00; // pour etre sur que la DES key s'est bien update ! (echo)
 		System.arraycopy(data,(byte)0,optional,(byte)1,(byte)dataSize);
 		byte[] command = new byte[(byte)header.length + (byte)optional.length];
 		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
