@@ -196,8 +196,6 @@ public class TheClient {
 	void uncipherFileByCard() {
 		System.out.println("Saisissez le nom du fichier a dechiffrer: ");
 		String filename = readKeyboard();
-
-		byte filenameSize = (byte)filename.getBytes().length;
 		byte[] response;
 
 
@@ -208,24 +206,26 @@ public class TheClient {
 				int return_value = 0;
 
 				while( (return_value = filedata.read(cipherdataBlock,0,CIPHER_MAXLENGTH)) !=-1 ) {
-					System.out.println("return :"+return_value);
+					//System.out.println("return :"+return_value);
 
 					if(return_value == CIPHER_MAXLENGTH){
 						response = cipherGeneric(UNCIPHERFILEBYCARD,INS_DES_ECB_NOPAD_DEC, cipherdataBlock);
+						uncipherdata.write(response, 0, return_value);
 					}else{
-
-						int paddingSize = cipherdataBlock[return_value-1];
-						System.out.println("Padding detecte= "+(short)(paddingSize&(short)255));
-						byte[] finalData = new byte[return_value-paddingSize];
-						System.out.println("Allocation pour enregistrement:"+(return_value-paddingSize));
-						System.arraycopy(cipherdataBlock, (byte)0, finalData, (byte)0, (byte)(return_value-paddingSize));
+						// extration du bon bout
+						byte[] finalData = new byte[return_value];
+						System.arraycopy(cipherdataBlock, (byte)0, finalData, (byte)0, return_value);
+						// uncipher
 						response = cipherGeneric(UNCIPHERFILEBYCARD,INS_DES_ECB_NOPAD_DEC, finalData);
+						// retirer padding
+						int padding_extrait = (response[return_value-1]-48); //(-48 pour offset dans la table ASCII)
+						//System.out.println("Padding was: "+padding_extrait);
+						uncipherdata.write(response, 0, return_value-padding_extrait);
+							
 					}
-					System.out.println("Block !");
-
-					uncipherdata.write(response, 0, (response.length));
 
 				}
+
 
 			}catch(Exception e){
 				System.out.println(e);
@@ -236,8 +236,6 @@ public class TheClient {
 	void cipherFileByCard() {
 		System.out.println("Saisissez le nom du fichier a chiffrer: ");
 		String filename = readKeyboard();
-
-		byte filenameSize = (byte)filename.getBytes().length;
 		byte[] response;
 
 
@@ -248,7 +246,7 @@ public class TheClient {
 				int return_value = 0;
 
 				while( (return_value = filedata.read(cipherdataBlock,0,CIPHER_MAXLENGTH)) !=-1 ) {
-					System.out.println("return :"+return_value);
+					//System.out.println("return :"+return_value);
 
 					if(return_value == CIPHER_MAXLENGTH){
 						response = cipherGeneric(CIPHERFILEBYCARD,INS_DES_ECB_NOPAD_ENC, cipherdataBlock);
@@ -256,9 +254,9 @@ public class TheClient {
 					}else{
 
 						 int paddingSize = (8-(return_value%8));
-						 System.out.println("PAdding: "+paddingSize);
+						 //System.out.println("PAdding: "+paddingSize);
 						 byte[] finalData = new byte[return_value+paddingSize];
-						 System.out.println("Allocation with padding included: "+(return_value+paddingSize));
+						 //System.out.println("Allocation with padding included: "+(return_value+paddingSize));
 						 
 						 byte[] finalPadding = new byte[paddingSize];
 						 for(int i =0; i < paddingSize ; i++){
@@ -266,13 +264,12 @@ public class TheClient {
 						 }
 
 						 System.arraycopy(cipherdataBlock, (byte)0, finalData, (byte)0, return_value);
-						 System.out.println("Ici ça passe !");
 						 System.arraycopy(finalPadding, (byte)0, finalData,return_value,paddingSize);
 
 						 response = cipherGeneric(CIPHERFILEBYCARD,INS_DES_ECB_NOPAD_ENC, finalData);
 					}
-					System.out.println("Block !");
-					System.out.println("Response length: "+response.length);
+					//System.out.println("Block !");
+					//System.out.println("Response length: "+response.length);
 					cipherdata.write(response);
 
 				}
