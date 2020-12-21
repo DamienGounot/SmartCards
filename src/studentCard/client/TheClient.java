@@ -165,6 +165,29 @@ public class TheClient {
 
 
 	void updateCardKey() {
+		
+		int dataSize =0;
+		String DESKey = "";
+		do{
+		System.out.println("Saisissez la clef DES (8 bytes):");
+		DESKey = readKeyboard();
+		dataSize = DESKey.getBytes().length;
+		}while(dataSize != 8);
+
+		byte[] data = new byte[dataSize];
+		System.arraycopy(DESKey.getBytes(), (byte)0, data, (byte)0, (byte)dataSize);
+
+		byte[] header = {CLA,UPDATECARDKEY, P1,P2}; 
+		byte[] optional = new byte[(byte)(dataSize+2)];
+		optional[0] = (byte)dataSize;
+		optional[dataSize+1] = 0x00; // pour etre sur que la DES key s'est bien update ! (echo)
+		System.arraycopy(data,(byte)0,optional,(byte)1,(byte)dataSize);
+		byte[] command = new byte[(byte)header.length + (byte)optional.length];
+		System.arraycopy(header,(byte)0,command,(byte)0,(byte)header.length);
+		System.arraycopy(optional,(byte)0,command,(byte)header.length,(byte)optional.length);
+		CommandAPDU cmd = new CommandAPDU( command);
+		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
+
 	}
 
 

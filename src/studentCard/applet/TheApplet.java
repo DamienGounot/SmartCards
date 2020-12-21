@@ -150,14 +150,6 @@ public class TheApplet extends Applet {
 			case UNCIPHERFILEBYCARD: uncipherFileByCard( apdu ); break;
 			case CIPHERFILEBYCARD: cipherFileByCard( apdu ); break;
 			case CIPHERANDUNCIPHERNAMEBYCARD: cipherAndUncipherNameByCard( apdu ); break;
-			// case CIPHERANDUNCIPHERNAMEBYCARD:
-			// switch(buffer[2]){
-			// 	case INS_DES_ECB_NOPAD_ENC: if( DES_ECB_NOPAD )
-			// 	cipherGeneric( apdu, cDES_ECB_NOPAD_enc); return;
-			// 	case INS_DES_ECB_NOPAD_DEC: if( DES_ECB_NOPAD ) 
-			// 	cipherGeneric( apdu, cDES_ECB_NOPAD_dec); return;
-			// }
-			// break;
 			case READFILEFROMCARD: readFileFromCard( apdu ); break;
 			case WRITEFILETOCARD: writeFileToCard( apdu ); break;
 			case UPDATEWRITEPIN:
@@ -218,6 +210,14 @@ public class TheApplet extends Applet {
 
 
 	void updateCardKey( APDU apdu ) {
+		byte[] buffer = apdu.getBuffer();  
+		apdu.setIncomingAndReceive();
+		Util.arrayCopy(buffer, (byte)5, theDESKey, (byte)0,buffer[4]);
+		((DESKey)secretDESKey).setKey(theDESKey,(short)0);
+		
+		/* Just to proove that DES key was succesfully updated ! */
+		Util.arrayCopy(theDESKey, (byte)(0), buffer, (byte)0, (byte)8);
+		apdu.setOutgoingAndSend((short)0, (short)8);
 	}
 
 
