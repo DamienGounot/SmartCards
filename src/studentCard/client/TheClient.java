@@ -177,29 +177,49 @@ public class TheClient {
 
 
 	void cipherAndUncipherNameByCard() {
-		//System.out.println("Saisissez le nom a chiffrer / dechiffrer via la carte:");
-		//String filename = readKeyboard();
-		//byte filenameSize = (byte)filename.getBytes().length;
+		System.out.println("Saisissez le nom a chiffrer / dechiffrer via la carte:");
+		String name = readKeyboard();
+		int dataSize = name.getBytes().length;
+		int paddingSize = (8-(dataSize%8));
+
+		byte[] finalData = new byte[dataSize+paddingSize];
+		byte[] finalPadding = new byte[paddingSize];
+
+		for(int i =0; i < paddingSize ; i++){
+			finalPadding[i]= (byte)(paddingSize+48); //(+48 pour offset dans la table ASCII)
+		}
+		System.arraycopy(name.getBytes(), (byte)0, finalData, (byte)0, (byte)dataSize);
+		System.arraycopy(finalPadding, (byte)0, finalData, (byte)dataSize, (byte)paddingSize);
+
+		System.out.print("Contenu a envoyer: ");
+	    String msg = "";
+	    for(int i=0; i<finalData.length;i++)
+		    msg += new StringBuffer("").append((char)finalData[i]);
+	    System.out.print(msg);
+
 
 	    sun.misc.BASE64Encoder encoder = new sun.misc.BASE64Encoder();
-	    byte[] response;
+	    
+		byte[] response;
 	    byte[] unciphered; 
-	    long seed=0;
-	    java.util.Random r = new java.util.Random( seed );
+	    //long seed=0;
+	    //java.util.Random r = new java.util.Random( seed );
 
-	    byte[] challengeDES = new byte[16]; 		// size%8==0, coz DES key 64bits
+	    //byte[] challengeDES = new byte[16]; 		// size%8==0, coz DES key 64bits
 
-	    r.nextBytes( challengeDES );
+	   // r.nextBytes( challengeDES );
 
 	    // System.out.println( "**TESTING**");
 	    // testDES_ECB_NOPAD( true );
 	    // System.out.println( "**TESTING**");
 	   
-	    System.out.println("\nchallenge:\n" + encoder.encode(challengeDES) + "\n");
-	    response = cipherGeneric(INS_DES_ECB_NOPAD_ENC, challengeDES);
-	    System.out.println("\nciphered is:\n" + encoder.encode(response) + "\n");
-	    unciphered = cipherGeneric(INS_DES_ECB_NOPAD_DEC, response);
-	    System.out.print("\nunciphered is:\n" + encoder.encode(unciphered) + "\n");
+			//  System.out.println("\nchallenge:\n" + encoder.encode(finalData) + "\n");
+			//  response = cipherGeneric(INS_DES_ECB_NOPAD_ENC, finalData);
+			//  System.out.println("\nciphered is:\n" + encoder.encode(response) + "\n");
+			//  unciphered = cipherGeneric(INS_DES_ECB_NOPAD_DEC, response);
+			//  System.out.print("\nunciphered is:\n" + encoder.encode(unciphered) + "\n");
+
+
 	}
 
 
