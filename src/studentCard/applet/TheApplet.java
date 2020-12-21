@@ -213,7 +213,8 @@ public class TheApplet extends Applet {
 		byte[] buffer = apdu.getBuffer();  
 		apdu.setIncomingAndReceive();
 		Util.arrayCopy(buffer, (byte)5, theDESKey, (byte)0,buffer[4]);
-		((DESKey)secretDESKey).setKey(theDESKey,(short)0);
+		initKeyDES(); 
+	    initDES_ECB_NOPAD(); 
 		
 		/* Just to proove that DES key was succesfully updated ! */
 		Util.arrayCopy(theDESKey, (byte)(0), buffer, (byte)0, (byte)8);
@@ -222,12 +223,14 @@ public class TheApplet extends Applet {
 
 
 	void uncipherFileByCard( APDU apdu ) {
+		byte[] buffer = apdu.getBuffer();
+		cipherGeneric( apdu, cDES_ECB_NOPAD_dec);
 	}
 
 
 	void cipherFileByCard( APDU apdu ) {
-
-		
+		byte[] buffer = apdu.getBuffer();
+		cipherGeneric( apdu, cDES_ECB_NOPAD_enc);
 	}
 
 
@@ -235,17 +238,17 @@ public class TheApplet extends Applet {
 
 		byte[] buffer = apdu.getBuffer();  
 		
-	switch(buffer[2]){
-				case INS_DES_ECB_NOPAD_ENC: 
-				if( DES_ECB_NOPAD )
-				cipherGeneric( apdu, cDES_ECB_NOPAD_enc);
-				break;
-				case INS_DES_ECB_NOPAD_DEC: 
-				if( DES_ECB_NOPAD ) 
-				cipherGeneric( apdu, cDES_ECB_NOPAD_dec); 
-				break;
-				default:
-			}
+		switch(buffer[2]){
+					case INS_DES_ECB_NOPAD_ENC: 
+					if( DES_ECB_NOPAD )
+					cipherGeneric( apdu, cDES_ECB_NOPAD_enc);
+					break;
+					case INS_DES_ECB_NOPAD_DEC: 
+					if( DES_ECB_NOPAD ) 
+					cipherGeneric( apdu, cDES_ECB_NOPAD_dec); 
+					break;
+					default:
+				}
 	}
 
 
