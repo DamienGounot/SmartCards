@@ -33,10 +33,12 @@ public class TheClient {
 	static final byte WRITENAMETOCARD			= (byte)0x01;
 
 	final static short MAXLENGTH = 255;
+	final static short CIPHER_MAXLENGTH = 240;
 	static final byte P1_FILENAME 	 	= (byte)0x01;
 	static final byte P1_BLOC 	 		= (byte)0x02;
 	static final byte P1_VAR 	 		= (byte)0x03;
 	static final byte P1_LASTBLOCK 	 		= (byte)0x04;
+	static 	byte[] cipherdataBlock = new byte[CIPHER_MAXLENGTH];
 	static 	byte[] dataBlock = new byte[MAXLENGTH];
 
 
@@ -192,10 +194,89 @@ public class TheClient {
 
 
 	void uncipherFileByCard() {
+		System.out.println("Saisissez le nom du fichier a dechiffrer: ");
+		String filename = readKeyboard();
+		byte[] response;
+
+
+		try{
+				DataInputStream filedata = new DataInputStream(new FileInputStream(filename));
+				DataOutputStream uncipherdata = new DataOutputStream(new FileOutputStream("uncipher_"+filename));
+			
+				int return_value = 0;
+
+				while( (return_value = filedata.read(cipherdataBlock,0,CIPHER_MAXLENGTH)) !=-1 ) {
+					//System.out.println("return :"+return_value);
+
+					if(return_value == CIPHER_MAXLENGTH){
+						response = cipherGeneric(UNCIPHERFILEBYCARD,INS_DES_ECB_NOPAD_DEC, cipherdataBlock);
+						uncipherdata.write(response, 0, return_value);
+					}else{
+						// extration du bon bout
+						byte[] finalData = new byte[return_value];
+						System.arraycopy(cipherdataBlock, (byte)0, finalData, (byte)0, return_value);
+						// uncipher
+						response = cipherGeneric(UNCIPHERFILEBYCARD,INS_DES_ECB_NOPAD_DEC, finalData);
+						// retirer padding
+						int padding_extrait = (response[return_value-1]-48); //(-48 pour offset dans la table ASCII)
+						//System.out.println("Padding was: "+padding_extrait);
+						uncipherdata.write(response, 0, return_value-padding_extrait);
+							
+					}
+
+				}
+
+
+			}catch(Exception e){
+				System.out.println(e);
+			}
 	}
 
 
 	void cipherFileByCard() {
+		System.out.println("Saisissez le nom du fichier a chiffrer: ");
+		String filename = readKeyboard();
+		byte[] response;
+
+
+		try{
+				DataInputStream filedata = new DataInputStream(new FileInputStream(filename));
+				DataOutputStream cipherdata = new DataOutputStream(new FileOutputStream("cipher_"+filename));
+			
+				int return_value = 0;
+
+				while( (return_value = filedata.read(cipherdataBlock,0,CIPHER_MAXLENGTH)) !=-1 ) {
+					//System.out.println("return :"+return_value);
+
+					if(return_value == CIPHER_MAXLENGTH){
+						response = cipherGeneric(CIPHERFILEBYCARD,INS_DES_ECB_NOPAD_ENC, cipherdataBlock);
+						
+					}else{
+
+						 int paddingSize = (8-(return_value%8));
+						 //System.out.println("PAdding: "+paddingSize);
+						 byte[] finalData = new byte[return_value+paddingSize];
+						 //System.out.println("Allocation with padding included: "+(return_value+paddingSize));
+						 
+						 byte[] finalPadding = new byte[paddingSize];
+						 for(int i =0; i < paddingSize ; i++){
+						 finalPadding[i]= (byte)(paddingSize+48); //(+48 pour offset dans la table ASCII)
+						 }
+
+						 System.arraycopy(cipherdataBlock, (byte)0, finalData, (byte)0, return_value);
+						 System.arraycopy(finalPadding, (byte)0, finalData,return_value,paddingSize);
+
+						 response = cipherGeneric(CIPHERFILEBYCARD,INS_DES_ECB_NOPAD_ENC, finalData);
+					}
+					//System.out.println("Block !");
+					//System.out.println("Response length: "+response.length);
+					cipherdata.write(response);
+
+				}
+
+			}catch(Exception e){
+				System.out.println(e);
+			}
 	}
 
 
@@ -203,6 +284,7 @@ public class TheClient {
 		System.out.println("Saisissez le nom a chiffrer / dechiffrer via la carte:");
 		String name = readKeyboard();
 		int dataSize = name.getBytes().length;
+		//System.out.println("Datasize: "+dataSize);
 		int paddingSize = (8-(dataSize%8));
 
 		byte[] finalData = new byte[dataSize+paddingSize];
@@ -211,9 +293,9 @@ public class TheClient {
 		for(int i =0; i < paddingSize ; i++){
 			finalPadding[i]= (byte)(paddingSize+48); //(+48 pour offset dans la table ASCII)
 		}
-		System.arraycopy(name.getBytes(), (byte)0, finalData, (byte)0, (byte)dataSize);
-		System.arraycopy(finalPadding, (byte)0, finalData, (byte)dataSize, (byte)paddingSize);
-
+		System.arraycopy(name.getBytes(), (byte)0, finalData, (byte)0, dataSize);
+		System.arraycopy(finalPadding, (byte)0, finalData, dataSize, paddingSize);
+		
 		System.out.print("Contenu a envoyer: ");
 	    String msg = "";
 	    for(int i=0; i<finalData.length;i++)
@@ -235,11 +317,9 @@ public class TheClient {
 	    // System.out.println( "**TESTING**");
 	    // testDES_ECB_NOPAD( true );
 	    // System.out.println( "**TESTING**");
-	   
 			//  System.out.println("\nchallenge:\n" + encoder.encode(finalData) + "\n");
-			  response = cipherGeneric(INS_DES_ECB_NOPAD_ENC, finalData);
+			  response = cipherGeneric(CIPHERANDUNCIPHERNAMEBYCARD,INS_DES_ECB_NOPAD_ENC, finalData);
 			//  System.out.println("\nciphered is:\n" + encoder.encode(response) + "\n");
-
 
 		System.out.print("Cipher: ");
 	    msg = "";
@@ -248,7 +328,7 @@ public class TheClient {
 	    System.out.println(msg);
 
 
-			  unciphered = cipherGeneric(INS_DES_ECB_NOPAD_DEC, response);
+			  unciphered = cipherGeneric(CIPHERANDUNCIPHERNAMEBYCARD,INS_DES_ECB_NOPAD_DEC, response);
 			//  System.out.print("\nunciphered is:\n" + encoder.encode(unciphered) + "\n");
 
 				System.out.print("Contenu receptionne: ");
@@ -258,11 +338,12 @@ public class TheClient {
 				System.out.println(msg);
 
 
-
 			int padding_reception = unciphered[unciphered.length-1];
 			padding_reception = padding_reception -48; //(-48 pour offset dans la table ASCII)
+		//	System.out.println("Padding apres rebase: "+padding_reception);
+		//	System.out.println("Allocation: "+(unciphered.length-padding_reception));
 		 	byte[] uncipheredFinal = new byte[unciphered.length-padding_reception];
-		 	System.arraycopy(unciphered, (byte)0, uncipheredFinal, (byte)0, (byte)(unciphered.length-padding_reception));
+		 	System.arraycopy(unciphered, (byte)0, uncipheredFinal, (byte)0, (unciphered.length-padding_reception));
 
 
 		System.out.print("Uncipher: ");
@@ -716,32 +797,35 @@ public class TheClient {
 
 
 
-    private byte[] cipherGeneric( byte typeINS, byte[] challenge ) {
+    private byte[] cipherGeneric(byte INS, byte typeINS, byte[] challenge ) {
 		byte[] result = new byte[challenge.length];
-
 		/* Forgage de la requete pour cippher/uncipher*/
 
-		byte[] header = {CLA,CIPHERANDUNCIPHERNAMEBYCARD, typeINS,(byte)0x00};
+		byte[] header = {CLA,INS, typeINS,(byte)0x00};
 
-		byte[] optional = new byte[(byte)(2+challenge.length)];
+		byte[] optional = new byte[(2+challenge.length)];
 		optional[0] = (byte)challenge.length;
-		System.arraycopy(challenge, 0, optional, (byte)1, optional[0]);
 
-		byte[] command = new byte[(byte)header.length + (byte)optional.length];
-		System.arraycopy(header, (byte)0, command, (byte)0, (byte)header.length);
-		System.arraycopy(optional, (byte)0, command,(byte)header.length, (byte)optional.length);
+		//System.out.println("[CIPHER]Lc:" +((short)optional[0]&(short)255));
 
+		System.arraycopy(challenge, 0, optional, (byte)1, ((short)optional[0]&(short)255));
+		byte[] command = new byte[header.length + optional.length];
+		System.arraycopy(header, (byte)0, command, (byte)0, header.length);
+		System.arraycopy(optional, (byte)0, command,header.length, optional.length);
 		CommandAPDU cmd = new CommandAPDU( command);
-	//	displayAPDU(cmd);
+		//displayAPDU(cmd);
 
 		/*end Requete*/
 
 		/* Reception et retour du cipher */
 		ResponseAPDU resp = this.sendAPDU( cmd, DISPLAY );
 		byte[] bytes = resp.getBytes();
-		System.arraycopy(bytes, 0, result, 0, (byte)(bytes.length-2));
+		System.arraycopy(bytes, 0, result, 0, (short)((short)(bytes.length-2)&(short)255));
 		return result;		
 	}
+
+
+	
 	
 
 	void mainLoop() {
